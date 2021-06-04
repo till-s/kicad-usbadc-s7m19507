@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 4
+Sheet 3 5
 Title ""
 Date ""
 Rev ""
@@ -69,8 +69,6 @@ Wire Wire Line
 	7150 4100 7200 4100
 Wire Wire Line
 	7150 3600 7200 3600
-Wire Wire Line
-	7150 3200 7500 3200
 Wire Wire Line
 	7150 2500 7200 2500
 Wire Wire Line
@@ -362,26 +360,16 @@ $EndComp
 $Comp
 L power:+1V8 #PWR?
 U 1 1 60B1CE47
-P 7500 3200
+P 8100 3100
 AR Path="/6086F2E3/60B1CE47" Ref="#PWR?"  Part="1" 
 AR Path="/60AABC24/60B1CE47" Ref="#PWR?"  Part="1" 
-F 0 "#PWR?" H 7500 3050 50  0001 C CNN
-F 1 "+1V8" V 7515 3328 50  0000 L CNN
-F 2 "" H 7500 3200 50  0001 C CNN
-F 3 "" H 7500 3200 50  0001 C CNN
-	1    7500 3200
-	0    1    1    0   
+F 0 "#PWR?" H 8100 2950 50  0001 C CNN
+F 1 "+1V8" V 8115 3228 50  0000 L CNN
+F 2 "" H 8100 3100 50  0001 C CNN
+F 3 "" H 8100 3100 50  0001 C CNN
+	1    8100 3100
+	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7550 2600 7150 2600
-Wire Wire Line
-	7550 2700 7150 2700
-Wire Wire Line
-	7550 2800 7150 2800
-Wire Wire Line
-	7550 2900 7150 2900
-Wire Wire Line
-	7550 3100 7150 3100
 $Comp
 L Memory_Flash:SST25VF080B-50-4x-S2Ax U6
 U 1 1 60898FE1
@@ -600,50 +588,8 @@ Wire Wire Line
 Connection ~ 5200 6350
 Wire Wire Line
 	5200 6350 3550 6350
-Text GLabel 5250 1150 1    50   Input ~ 0
+Text GLabel 4550 1150 1    50   Input ~ 0
 FIFO_CLK
-Text GLabel 7550 3500 2    50   BiDi ~ 0
-FIFO_D7
-Text GLabel 7550 3800 2    50   BiDi ~ 0
-FIFO_D6
-Text GLabel 7550 3700 2    50   BiDi ~ 0
-FIFO_D5
-Text GLabel 7550 3100 2    50   BiDi ~ 0
-FIFO_D2
-Text GLabel 7550 3400 2    50   BiDi ~ 0
-FIFO_D1
-Text GLabel 7550 2700 2    50   Input ~ 0
-FIFO_RXE
-Text GLabel 7550 2900 2    50   Input ~ 0
-FIFO_TXF
-Text GLabel 7550 4200 2    50   Output ~ 0
-FIFO_RDb
-Text GLabel 7550 4300 2    50   Output ~ 0
-FIFO_WRb
-Text GLabel 7550 4000 2    50   Output ~ 0
-FIFO_SIWU
-Text GLabel 7550 3900 2    50   BiDi ~ 0
-FIFO_D3
-Text GLabel 7550 2800 2    50   BiDi ~ 0
-FIFO_D4
-Text GLabel 7550 2600 2    50   BiDi ~ 0
-FIFO_D0
-Wire Wire Line
-	7150 3400 7550 3400
-Wire Wire Line
-	7150 3500 7550 3500
-Wire Wire Line
-	7150 3700 7550 3700
-Wire Wire Line
-	7550 3800 7150 3800
-Wire Wire Line
-	7150 3900 7550 3900
-Wire Wire Line
-	7550 4000 7150 4000
-Wire Wire Line
-	7150 4200 7550 4200
-Wire Wire Line
-	7550 4300 7150 4300
 NoConn ~ 7150 4700
 Wire Wire Line
 	3850 6650 3850 7050
@@ -775,17 +721,6 @@ F 5 "Wurth" V 5850 7200 50  0001 C CNN "Manufacturer"
 	1    5850 7200
 	0    1    -1   0   
 $EndComp
-$Comp
-L fmc:XC3S50A-VQ100 U5
-U 1 1 60AE5529
-P 1650 3000
-F 0 "U5" H 2800 4100 60  0000 L CNN
-F 1 "XC3S50A-VQ100" H 4350 1800 60  0000 L CNN
-F 2 "Package_QFP:VQFP-100_14x14mm_P0.5mm" H 2500 3650 60  0001 R CNN
-F 3 "" H 2500 3450 60  0001 R CNN
-	1    1650 3000
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5850 7350 5750 7350
 Wire Wire Line
@@ -823,139 +758,19 @@ Wire Wire Line
 	5950 6650 5850 6650
 Wire Wire Line
 	5850 6650 5850 6750
-NoConn ~ 5350 1800
 NoConn ~ 2350 4400
-Text GLabel 4250 1150 1    50   BiDi ~ 0
-I2C_SCL
 Text GLabel 4150 1150 1    50   BiDi ~ 0
+I2C_SCL
+Text GLabel 4250 1150 1    50   BiDi ~ 0
 I2C_SDA
 Wire Wire Line
 	4150 1150 4150 1800
-Text GLabel 4550 1150 1    50   Input ~ 0
+Text GLabel 5150 1150 1    50   Input ~ 0
 FPGA_CLK
 Wire Wire Line
 	4550 1150 4550 1800
 Wire Wire Line
-	5250 1150 5250 1800
-$Comp
-L Connector_Generic:Conn_02x08_Odd_Even J6
-U 1 1 60B60771
-P 1750 3950
-F 0 "J6" V 1754 4330 50  0000 L CNN
-F 1 "GPIO_1V8" V 2250 3750 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical" H 1750 3950 50  0001 C CNN
-F 3 "~" H 1750 3950 50  0001 C CNN
-	1    1750 3950
-	-1   0    0    1   
-$EndComp
-Wire Wire Line
-	1950 4250 2350 4250
-Wire Wire Line
-	2350 4250 2350 4300
-Wire Wire Line
-	1950 4150 2250 4150
-Wire Wire Line
-	2250 4150 2250 4200
-Wire Wire Line
-	2250 4200 2350 4200
-Wire Wire Line
-	1950 4050 2250 4050
-Wire Wire Line
-	2250 4050 2250 3900
-Wire Wire Line
-	2250 3900 2350 3900
-Wire Wire Line
-	1950 3950 2150 3950
-Wire Wire Line
-	2150 3950 2150 3800
-Wire Wire Line
-	2150 3800 2350 3800
-Wire Wire Line
-	1950 3850 2250 3850
-Wire Wire Line
-	2250 3850 2250 3600
-Wire Wire Line
-	2250 3600 2350 3600
-Wire Wire Line
-	1950 3750 2150 3750
-Wire Wire Line
-	2150 3750 2150 3500
-Wire Wire Line
-	2150 3500 2350 3500
-Wire Wire Line
-	1300 3400 1350 3400
-Wire Wire Line
-	1950 3650 2100 3650
-Wire Wire Line
-	2100 3650 2100 3300
-Wire Wire Line
-	2100 3300 2350 3300
-Wire Wire Line
-	1950 3550 2000 3550
-Wire Wire Line
-	2000 3550 2000 3200
-Wire Wire Line
-	2000 3200 2350 3200
-Wire Wire Line
-	1450 3550 1400 3550
-Wire Wire Line
-	1400 3550 1400 3750
-$Comp
-L power:GND #PWR?
-U 1 1 60BE2000
-P 1400 4400
-AR Path="/6086F2E3/60BE2000" Ref="#PWR?"  Part="1" 
-AR Path="/60AABC24/60BE2000" Ref="#PWR?"  Part="1" 
-F 0 "#PWR?" H 1400 4150 50  0001 C CNN
-F 1 "GND" H 1405 4227 50  0000 C CNN
-F 2 "" H 1400 4400 50  0001 C CNN
-F 3 "" H 1400 4400 50  0001 C CNN
-	1    1400 4400
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1400 3750 1450 3750
-Connection ~ 1400 3750
-Wire Wire Line
-	1400 3750 1400 3950
-Wire Wire Line
-	1400 3950 1450 3950
-Connection ~ 1400 3950
-Wire Wire Line
-	1400 3950 1400 4150
-Wire Wire Line
-	1400 4150 1450 4150
-Connection ~ 1400 4150
-Wire Wire Line
-	1400 4150 1400 4400
-Wire Wire Line
-	1350 3400 1350 3650
-Wire Wire Line
-	1350 4250 1450 4250
-Connection ~ 1350 3400
-Wire Wire Line
-	1350 3400 2350 3400
-Wire Wire Line
-	1350 4050 1450 4050
-Connection ~ 1350 4050
-Wire Wire Line
-	1350 4050 1350 4250
-Wire Wire Line
-	1350 3850 1450 3850
-Connection ~ 1350 3850
-Wire Wire Line
-	1350 3850 1350 4050
-Wire Wire Line
-	1350 3650 1450 3650
-Connection ~ 1350 3650
-Wire Wire Line
-	1350 3650 1350 3850
-NoConn ~ 2350 2600
-NoConn ~ 4650 1800
-NoConn ~ 4750 1800
-NoConn ~ 4950 1800
-NoConn ~ 5050 1800
-NoConn ~ 5150 1800
+	5150 1150 5150 1800
 NoConn ~ 5750 1800
 NoConn ~ 5850 1800
 Wire Wire Line
@@ -1478,7 +1293,7 @@ L Connector_Generic:Conn_02x04_Odd_Even J9
 U 1 1 60AB847C
 P 3650 1250
 F 0 "J9" V 3654 1430 50  0000 L CNN
-F 1 "Conn_02x04_Odd_Even" V 3600 -50 50  0000 L CNN
+F 1 "Conn_02x04_Odd_Even" V 3650 1600 50  0000 L CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical" H 3650 1250 50  0001 C CNN
 F 3 "~" H 3650 1250 50  0001 C CNN
 	1    3650 1250
@@ -1504,18 +1319,6 @@ Wire Wire Line
 	7100 6250 7100 6050
 Wire Wire Line
 	4750 6250 7100 6250
-Wire Wire Line
-	2350 2700 2300 2700
-Wire Wire Line
-	2300 2700 2300 2800
-Wire Wire Line
-	2300 2800 2350 2800
-Wire Wire Line
-	2350 2900 2300 2900
-Wire Wire Line
-	2300 2900 2300 3000
-Wire Wire Line
-	2300 3000 2350 3000
 $Comp
 L Device:R_Small R17
 U 1 1 60C32001
@@ -1689,4 +1492,138 @@ Wire Wire Line
 	5500 6950 5500 7050
 Wire Wire Line
 	5500 7050 5550 7050
+Wire Wire Line
+	1300 3400 2350 3400
+Text GLabel 2100 3200 0    50   BiDi ~ 0
+FIFO_D6
+Text GLabel 2100 3800 0    50   BiDi ~ 0
+FIFO_D2
+Text GLabel 2100 3600 0    50   BiDi ~ 0
+FIFO_D1
+Text GLabel 2100 4200 0    50   Input ~ 0
+FIFO_RXE
+Text GLabel 2100 3000 0    50   Input ~ 0
+FIFO_TXF
+Text GLabel 2100 2700 0    50   Output ~ 0
+FIFO_RDb
+Text GLabel 2100 2600 0    50   Output ~ 0
+FIFO_WRb
+Text GLabel 2100 2800 0    50   Output ~ 0
+FIFO_SIWU
+Text GLabel 2100 2900 0    50   BiDi ~ 0
+FIFO_D3
+Text GLabel 2100 3900 0    50   BiDi ~ 0
+FIFO_D4
+Text GLabel 2100 4300 0    50   BiDi ~ 0
+FIFO_D0
+Wire Wire Line
+	2100 2600 2350 2600
+Wire Wire Line
+	2100 2700 2350 2700
+Wire Wire Line
+	2350 2800 2100 2800
+Wire Wire Line
+	2100 2900 2350 2900
+Wire Wire Line
+	2100 3000 2350 3000
+Wire Wire Line
+	2100 3200 2350 3200
+Wire Wire Line
+	2100 3300 2350 3300
+Wire Wire Line
+	2100 3500 2350 3500
+Wire Wire Line
+	2100 3600 2350 3600
+Wire Wire Line
+	2100 3800 2350 3800
+Wire Wire Line
+	2100 3900 2350 3900
+Wire Wire Line
+	2100 4200 2350 4200
+Wire Wire Line
+	2100 4300 2350 4300
+Wire Wire Line
+	8100 3100 8100 3200
+Wire Wire Line
+	7150 3200 8100 3200
+Wire Wire Line
+	7150 2700 7450 2700
+Wire Wire Line
+	7450 2700 7450 2800
+Wire Wire Line
+	7450 2800 7150 2800
+NoConn ~ 7150 2600
+Text GLabel 2100 3300 0    50   BiDi ~ 0
+FIFO_D5
+Text GLabel 2100 3500 0    50   BiDi ~ 0
+FIFO_D7
+Text GLabel 7600 4000 2    50   Input ~ 0
+ADC_D5
+Text GLabel 7600 3900 2    50   Input ~ 0
+ADC_D4
+Text GLabel 7600 3800 2    50   Input ~ 0
+ADC_D3
+Text GLabel 7600 3700 2    50   Input ~ 0
+ADC_D2
+Text GLabel 7600 3500 2    50   Input ~ 0
+ADC_D1
+Text GLabel 7600 4200 2    50   Input ~ 0
+ADC_D6
+Text GLabel 7600 4300 2    50   Input ~ 0
+ADC_D7
+Text GLabel 7600 3400 2    50   Input ~ 0
+ADC_D0
+Text GLabel 5250 1150 1    50   Input ~ 0
+ADC_DCLK
+Text GLabel 7600 2900 2    50   Input ~ 0
+ADC_DOR
+Text GLabel 4950 1150 1    50   Output ~ 0
+ADC_SYNC
+Wire Wire Line
+	7150 4300 7600 4300
+Wire Wire Line
+	7150 4200 7600 4200
+Wire Wire Line
+	7150 4000 7600 4000
+Wire Wire Line
+	7600 3900 7150 3900
+Wire Wire Line
+	7150 3800 7600 3800
+Wire Wire Line
+	7150 3700 7600 3700
+Wire Wire Line
+	7600 3500 7150 3500
+Wire Wire Line
+	7150 3400 7600 3400
+Wire Wire Line
+	7150 2900 7600 2900
+Wire Wire Line
+	5250 1150 5250 1800
+NoConn ~ 5350 1800
+Wire Wire Line
+	4950 1150 4950 1800
+Text GLabel 4650 1150 1    50   Output ~ 0
+ADC_CSb
+Text GLabel 4750 1150 1    50   Output ~ 0
+ADC_SCLK
+Text GLabel 5050 1150 1    50   BiDi ~ 0
+ADC_SDIO
+$Comp
+L fmc:XC3S50A-VQ100 U5
+U 1 1 60AE5529
+P 1650 3000
+F 0 "U5" H 2800 4100 60  0000 L CNN
+F 1 "XC3S50A-VQ100" H 4350 1800 60  0000 L CNN
+F 2 "Package_QFP:VQFP-100_14x14mm_P0.5mm" H 2500 3650 60  0001 R CNN
+F 3 "" H 2500 3450 60  0001 R CNN
+	1    1650 3000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4650 1150 4650 1800
+Wire Wire Line
+	4750 1150 4750 1800
+Wire Wire Line
+	5050 1150 5050 1800
+NoConn ~ 7150 3100
 $EndSCHEMATC

@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 4
+Sheet 1 5
 Title ""
 Date ""
 Rev ""
@@ -30,5 +30,11 @@ S 5250 3250 1450 1100
 U 60B16D71
 F0 "pll_clock" 50
 F1 "pll_clock.sch" 50
+$EndSheet
+$Sheet
+S 5250 4750 1450 1300
+U 612B1274
+F0 "ADC+Driver" 50
+F1 "max19507.sch" 50
 $EndSheet
 $EndSCHEMATC
