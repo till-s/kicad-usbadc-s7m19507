@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 2 4
+Sheet 2 7
 Title ""
 Date ""
 Rev ""
@@ -244,7 +244,7 @@ L power:GND #PWR?
 U 1 1 6088C35C
 P 2800 3650
 F 0 "#PWR?" H 2800 3400 50  0001 C CNN
-F 1 "GND" H 2805 3477 50  0000 C CNN
+F 1 "GND" H 2805 3477 50  0001 C CNN
 F 2 "" H 2800 3650 50  0001 C CNN
 F 3 "" H 2800 3650 50  0001 C CNN
 	1    2800 3650
@@ -307,27 +307,12 @@ Wire Wire Line
 	3100 3300 3250 3300
 Wire Wire Line
 	3250 3300 3250 3400
-$Comp
-L Device:R_Small R7
-U 1 1 6088C3B0
-P 3600 3300
-F 0 "R7" V 3450 3300 50  0000 C CNN
-F 1 "316k" V 3450 3500 50  0000 C CNN
-F 2 "Resistor_SMD:R_0603_1608Metric" H 3600 3300 50  0001 C CNN
-F 3 "~" H 3600 3300 50  0001 C CNN
-F 4 " RC0603FR-07316KL " V 3600 3300 50  0001 C CNN "Part"
-F 5 "Yageo" V 3600 3300 50  0001 C CNN "Manufacturer"
-	1    3600 3300
-	0    1    1    0   
-$EndComp
 Wire Wire Line
 	3250 3300 3450 3300
 Connection ~ 3250 3300
 Wire Wire Line
 	3700 3300 3750 3300
 Connection ~ 3950 3300
-Wire Wire Line
-	3550 3200 3950 3200
 Wire Wire Line
 	3500 3450 3450 3450
 Wire Wire Line
@@ -345,24 +330,22 @@ Wire Wire Line
 $Comp
 L power:+2V5 #PWR?
 U 1 1 60893186
-P 4950 3200
-F 0 "#PWR?" H 4950 3050 50  0001 C CNN
-F 1 "+2V5" H 4965 3373 50  0000 C CNN
-F 2 "" H 4950 3200 50  0001 C CNN
-F 3 "" H 4950 3200 50  0001 C CNN
-	1    4950 3200
+P 4950 3300
+F 0 "#PWR?" H 4950 3150 50  0001 C CNN
+F 1 "+2V5" H 4965 3473 50  0000 C CNN
+F 2 "" H 4950 3300 50  0001 C CNN
+F 3 "" H 4950 3300 50  0001 C CNN
+	1    4950 3300
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3950 3200 4950 3200
-Connection ~ 3950 3200
+	3950 3300 4950 3300
 Wire Wire Line
 	2200 3200 2350 3200
 Wire Wire Line
 	2450 2650 2450 3300
 Wire Wire Line
 	2450 3300 2500 3300
-Connection ~ 4950 1750
 $Comp
 L Regulator_Switching:TLV62569DDC U3
 U 1 1 608956F3
@@ -747,10 +730,6 @@ Wire Wire Line
 Wire Wire Line
 	4600 2150 4600 2050
 Wire Wire Line
-	3500 2650 4950 2650
-Wire Wire Line
-	4950 1750 4950 2650
-Wire Wire Line
 	2450 2650 3100 2650
 Wire Wire Line
 	3100 1950 3100 2650
@@ -845,19 +824,6 @@ Connection ~ 4600 2150
 Text Notes 7600 2350 0    50   ~ 0
 For external supply:\n - jumper ext-power to +5V\n - jumper gate to GND\n - CBUS programmed to VBUS_SENSE\nFor bus-power:\n - jumper VBUS to +5V\n - open gate jumper\n - CBUS programmed to #PWREN
 $Comp
-L Device:L L2
-U 1 1 609C00E5
-P 3400 3200
-F 0 "L2" V 3219 3200 50  0000 C CNN
-F 1 "2u2" V 3310 3200 50  0000 C CNN
-F 2 "Inductor_SMD:L_Taiyo-Yuden_NR-50xx" H 3400 3200 50  0001 C CNN
-F 3 "~" H 3400 3200 50  0001 C CNN
-F 4 "SRN8040TA-2R2Y" V 3400 3200 50  0001 C CNN "Part"
-F 5 "Bourns" V 3400 3200 50  0001 C CNN "Manufacturer"
-	1    3400 3200
-	0    1    1    0   
-$EndComp
-$Comp
 L Device:L L3
 U 1 1 609C070F
 P 3400 4700
@@ -887,15 +853,14 @@ Wire Wire Line
 $Comp
 L power:PWR_FLAG #FLG?
 U 1 1 60A715D8
-P 4950 2650
-F 0 "#FLG?" H 4950 2725 50  0001 C CNN
-F 1 "PWR_FLAG" H 4950 2823 50  0000 C CNN
-F 2 "" H 4950 2650 50  0001 C CNN
-F 3 "~" H 4950 2650 50  0001 C CNN
-	1    4950 2650
+P 4950 2350
+F 0 "#FLG?" H 4950 2425 50  0001 C CNN
+F 1 "PWR_FLAG" H 4950 2523 50  0001 C CNN
+F 2 "" H 4950 2350 50  0001 C CNN
+F 3 "~" H 4950 2350 50  0001 C CNN
+	1    4950 2350
 	1    0    0    1   
 $EndComp
-Connection ~ 4950 2650
 $Comp
 L power:PWR_FLAG #FLG?
 U 1 1 60A71F8A
@@ -927,16 +892,16 @@ Wire Wire Line
 Wire Wire Line
 	6800 3800 6800 4000
 Connection ~ 6800 4000
-Connection ~ 4950 3200
+Connection ~ 4950 3300
 $Comp
 L power:PWR_FLAG #FLG?
 U 1 1 60A71BDA
-P 4950 3200
-F 0 "#FLG?" H 4950 3275 50  0001 C CNN
-F 1 "PWR_FLAG" H 4950 3373 50  0000 C CNN
-F 2 "" H 4950 3200 50  0001 C CNN
-F 3 "~" H 4950 3200 50  0001 C CNN
-	1    4950 3200
+P 4950 3300
+F 0 "#FLG?" H 4950 3375 50  0001 C CNN
+F 1 "PWR_FLAG" H 4950 3473 50  0001 C CNN
+F 2 "" H 4950 3300 50  0001 C CNN
+F 3 "~" H 4950 3300 50  0001 C CNN
+	1    4950 3300
 	1    0    0    1   
 $EndComp
 Wire Wire Line
@@ -1061,7 +1026,7 @@ FIFO_D4
 Text GLabel 10000 1700 3    50   BiDi ~ 0
 FIFO_D2
 Text GLabel 10100 1700 3    50   BiDi ~ 0
-FIFO_D7
+FIFO_D5
 Wire Wire Line
 	9900 1600 9900 1700
 Wire Wire Line
@@ -1104,7 +1069,7 @@ $Comp
 L Device:C_Small C5
 U 1 1 60BFDD30
 P 3600 3450
-F 0 "C5" V 3700 3600 50  0000 C CNN
+F 0 "C5" V 3750 3600 50  0000 C CNN
 F 1 "6p8" V 3750 3450 50  0000 C CNN
 F 2 "Capacitor_SMD:C_0603_1608Metric" H 3600 3450 50  0001 C CNN
 F 3 "~" H 3600 3450 50  0001 C CNN
@@ -1386,4 +1351,144 @@ Wire Wire Line
 	6450 1200 7200 1200
 Wire Wire Line
 	6200 1450 8050 1450
+Text GLabel 3250 4150 2    50   Output ~ 0
+PG2V5
+Wire Wire Line
+	3250 4150 3100 4150
+Connection ~ 3100 4150
+$Comp
+L Device:R_Small R7
+U 1 1 6088C3B0
+P 3600 3300
+F 0 "R7" V 3700 3400 50  0000 C CNN
+F 1 "316k" V 3800 3450 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 3600 3300 50  0001 C CNN
+F 3 "~" H 3600 3300 50  0001 C CNN
+F 4 " RC0603FR-07316KL " V 3600 3300 50  0001 C CNN "Part"
+F 5 "Yageo" V 3600 3300 50  0001 C CNN "Manufacturer"
+	1    3600 3300
+	0    1    1    0   
+$EndComp
+Text Notes 4250 3900 0    39   Italic 8
+Diode in the positive 2V5 branch is not\nnecessary for switching but compensates\nthe voltage drop of the respective diode\nin the (unregulated) negative -2V5 branch.
+$Comp
+L Device:L_Coupled_1324 L2
+U 1 1 60BB27E5
+P 3450 3100
+F 0 "L2" H 3150 3350 50  0000 C CNN
+F 1 "2.2u" H 3150 3250 50  0000 C CNN
+F 2 "proj_footprints:L_Taiyo-Yuden_NR-50xx+bourns0703" H 3450 3100 50  0001 C CNN
+F 3 "~" H 3450 3100 50  0001 C CNN
+F 4 "SRF0703-2R2M" H 3450 3100 50  0001 C CNN "Part"
+F 5 "Bourns" H 3450 3100 50  0001 C CNN "Manufacturer"
+	1    3450 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D_Schottky_Small D8
+U 1 1 60BB54A7
+P 3800 3200
+F 0 "D8" H 3900 3150 50  0000 C CNN
+F 1 "CTS05S30" H 3550 3150 50  0000 C CNN
+F 2 "proj_footprints:sod323-special" V 3800 3200 50  0001 C CNN
+F 3 "~" V 3800 3200 50  0001 C CNN
+F 4 "CTS05S30" H 3800 3200 50  0001 C CNN "Part"
+F 5 "Toshiba" H 3800 3200 50  0001 C CNN "Manufacturer"
+	1    3800 3200
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	3650 3200 3700 3200
+Wire Wire Line
+	3900 3200 3950 3200
+$Comp
+L Device:D_Schottky_Small D7
+U 1 1 60BC459F
+P 3800 2850
+F 0 "D7" H 3700 2800 50  0000 C CNN
+F 1 "CTS05S30" H 4050 2800 50  0000 C CNN
+F 2 "proj_footprints:sod323" V 3800 2850 50  0001 C CNN
+F 3 "~" V 3800 2850 50  0001 C CNN
+F 4 "CTS05S30" H 3800 2850 50  0001 C CNN "Part"
+F 5 "Toshiba" H 3800 2850 50  0001 C CNN "Manufacturer"
+	1    3800 2850
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	3250 3000 3250 2850
+Wire Wire Line
+	3250 2850 3700 2850
+$Comp
+L power:GND #PWR?
+U 1 1 60BCCE0F
+P 3800 3000
+F 0 "#PWR?" H 3800 2750 50  0001 C CNN
+F 1 "GND" H 3805 2827 50  0001 C CNN
+F 2 "" H 3800 3000 50  0001 C CNN
+F 3 "" H 3800 3000 50  0001 C CNN
+	1    3800 3000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3650 3000 3800 3000
+$Comp
+L Device:C_Small C63
+U 1 1 60BD4FD9
+P 4200 2950
+F 0 "C63" H 4350 3000 50  0000 L CNN
+F 1 "10u" H 4300 2900 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 4200 2950 50  0001 C CNN
+F 3 "~" H 4200 2950 50  0001 C CNN
+F 4 "CNC5L1X7R1C106K160AE" H 4200 2950 50  0001 C CNN "Part"
+F 5 "TDK" H 4200 2950 50  0001 C CNN "Manufacturer"
+	1    4200 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3900 2850 4200 2850
+Wire Wire Line
+	4200 3050 4000 3050
+Wire Wire Line
+	4000 3050 4000 3000
+Wire Wire Line
+	4000 3000 3800 3000
+Connection ~ 3800 3000
+$Comp
+L power:-2V5 #PWR?
+U 1 1 60BE6299
+P 4950 2800
+F 0 "#PWR?" H 4950 2900 50  0001 C CNN
+F 1 "-2V5" H 4965 2973 50  0000 C CNN
+F 2 "" H 4950 2800 50  0001 C CNN
+F 3 "" H 4950 2800 50  0001 C CNN
+	1    4950 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4950 1750 4950 2350
+Connection ~ 4950 1750
+Wire Wire Line
+	4950 2350 4100 2350
+Wire Wire Line
+	4100 2350 4100 2650
+Wire Wire Line
+	4100 2650 3500 2650
+Connection ~ 4950 2350
+Wire Wire Line
+	4200 2850 4950 2850
+Wire Wire Line
+	4950 2850 4950 2800
+Connection ~ 4200 2850
+$Comp
+L power:PWR_FLAG #FLG?
+U 1 1 60C0907B
+P 4950 2850
+F 0 "#FLG?" H 4950 2925 50  0001 C CNN
+F 1 "PWR_FLAG" H 4950 3023 50  0001 C CNN
+F 2 "" H 4950 2850 50  0001 C CNN
+F 3 "~" H 4950 2850 50  0001 C CNN
+	1    4950 2850
+	1    0    0    1   
+$EndComp
+Connection ~ 4950 2850
 $EndSCHEMATC

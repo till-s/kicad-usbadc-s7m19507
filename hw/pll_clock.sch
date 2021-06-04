@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 4 5
+Sheet 4 7
 Title ""
 Date ""
 Rev ""
@@ -592,4 +592,6 @@ Wire Wire Line
 	6550 2900 7250 2900
 Wire Wire Line
 	7900 3100 7900 3200
+Text Notes 3750 4000 0    50   ~ 0
+i2c address 0x68 or 0x6A
 $EndSCHEMATC

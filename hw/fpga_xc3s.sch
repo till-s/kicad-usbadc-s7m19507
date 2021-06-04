@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 5
+Sheet 3 7
 Title ""
 Date ""
 Rev ""
@@ -246,8 +246,6 @@ Wire Wire Line
 Connection ~ 3950 1600
 Wire Wire Line
 	3950 1600 3250 1600
-Wire Wire Line
-	5450 6350 5200 6350
 Wire Wire Line
 	3550 6100 3550 6350
 Connection ~ 3550 6350
@@ -536,29 +534,6 @@ Wire Wire Line
 Wire Wire Line
 	4050 6100 4050 6450
 $Comp
-L Connector_Generic:Conn_02x08_Odd_Even J5
-U 1 1 608D9FAE
-P 4550 6650
-F 0 "J5" V 4554 7030 50  0000 L CNN
-F 1 "GPIO_2V5" V 5050 6450 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x08_P2.54mm_Vertical" H 4550 6650 50  0001 C CNN
-F 3 "~" H 4550 6650 50  0001 C CNN
-	1    4550 6650
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	4350 7050 4350 6950
-Wire Wire Line
-	4350 7050 4550 7050
-Wire Wire Line
-	4550 7050 4550 6950
-Connection ~ 4350 7050
-Wire Wire Line
-	4550 7050 4750 7050
-Wire Wire Line
-	4750 7050 4750 6950
-Connection ~ 4550 7050
-$Comp
 L power:GND #PWR?
 U 1 1 6091690C
 P 3650 7050
@@ -571,23 +546,6 @@ F 3 "" H 3650 7050 50  0001 C CNN
 	1    3650 7050
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	4450 6950 4450 7000
-Wire Wire Line
-	4450 7000 4650 7000
-Wire Wire Line
-	4650 6950 4650 7000
-Connection ~ 4650 7000
-Wire Wire Line
-	4650 7000 4850 7000
-Wire Wire Line
-	4850 6950 4850 7000
-Connection ~ 4850 7000
-Wire Wire Line
-	5200 7000 5200 6350
-Connection ~ 5200 6350
-Wire Wire Line
-	5200 6350 3550 6350
 Text GLabel 4550 1150 1    50   Input ~ 0
 FIFO_CLK
 NoConn ~ 7150 4700
@@ -648,25 +606,13 @@ Wire Wire Line
 Wire Wire Line
 	4550 6400 4650 6400
 Wire Wire Line
-	4650 6400 4650 6450
-Wire Wire Line
 	4650 6100 4650 6300
 Wire Wire Line
 	4650 6300 4750 6300
 Wire Wire Line
-	4750 6300 4750 6450
-Wire Wire Line
 	4150 6950 4150 7050
-Connection ~ 4150 7050
-Wire Wire Line
-	4150 7050 4350 7050
 Wire Wire Line
 	4250 6950 4250 7000
-Wire Wire Line
-	4250 7000 4450 7000
-Connection ~ 4450 7000
-Wire Wire Line
-	4850 7000 5200 7000
 $Comp
 L Device:R_Small R13
 U 1 1 609A52B1
@@ -723,11 +669,6 @@ F 5 "Wurth" V 5850 7200 50  0001 C CNN "Manufacturer"
 $EndComp
 Wire Wire Line
 	5850 7350 5750 7350
-Wire Wire Line
-	4750 7350 4750 7050
-Connection ~ 5450 7350
-Wire Wire Line
-	5450 7350 4750 7350
 Connection ~ 5550 7350
 Wire Wire Line
 	5550 7350 5450 7350
@@ -737,7 +678,6 @@ Wire Wire Line
 Connection ~ 5750 7350
 Wire Wire Line
 	5750 7350 5650 7350
-Connection ~ 4750 7050
 Wire Wire Line
 	5550 6700 5550 6750
 Wire Wire Line
@@ -1437,8 +1377,6 @@ Wire Wire Line
 Wire Wire Line
 	5050 6700 5550 6700
 Wire Wire Line
-	4850 6450 4850 6300
-Wire Wire Line
 	4850 6300 5250 6300
 Wire Wire Line
 	5250 6300 5250 6100
@@ -1565,17 +1503,17 @@ Text GLabel 7600 3800 2    50   Input ~ 0
 ADC_D3
 Text GLabel 7600 3700 2    50   Input ~ 0
 ADC_D2
-Text GLabel 7600 3500 2    50   Input ~ 0
+Text GLabel 7600 3400 2    50   Input ~ 0
 ADC_D1
 Text GLabel 7600 4200 2    50   Input ~ 0
 ADC_D6
 Text GLabel 7600 4300 2    50   Input ~ 0
 ADC_D7
-Text GLabel 7600 3400 2    50   Input ~ 0
+Text GLabel 7600 2900 2    50   Input ~ 0
 ADC_D0
 Text GLabel 5250 1150 1    50   Input ~ 0
 ADC_DCLK
-Text GLabel 7600 2900 2    50   Input ~ 0
+Text GLabel 7600 3500 2    50   Input ~ 0
 ADC_DOR
 Text GLabel 4950 1150 1    50   Output ~ 0
 ADC_SYNC
@@ -1626,4 +1564,58 @@ Wire Wire Line
 Wire Wire Line
 	5050 1150 5050 1800
 NoConn ~ 7150 3100
+$Comp
+L Connector_Generic:Conn_02x02_Odd_Even J5
+U 1 1 610A468D
+P 4250 6650
+F 0 "J5" V 4254 6730 50  0000 L CNN
+F 1 "GPIO2V5" V 4345 6730 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical" H 4250 6650 50  0001 C CNN
+F 3 "~" H 4250 6650 50  0001 C CNN
+	1    4250 6650
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 610A5763
+P 6000 7350
+AR Path="/6086F2E3/610A5763" Ref="#PWR?"  Part="1" 
+AR Path="/60AABC24/610A5763" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 6000 7100 50  0001 C CNN
+F 1 "GND" H 6005 7177 50  0000 C CNN
+F 2 "" H 6000 7350 50  0001 C CNN
+F 3 "" H 6000 7350 50  0001 C CNN
+	1    6000 7350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5850 7350 6000 7350
+Connection ~ 5850 7350
+Wire Wire Line
+	3550 6350 3650 6350
+Wire Wire Line
+	4250 7000 3650 7000
+Wire Wire Line
+	3650 7000 3650 6350
+Connection ~ 3650 6350
+Wire Wire Line
+	3650 6350 5450 6350
+Text GLabel 4750 7150 3    50   Output ~ 0
+PGA_CSb
+Text GLabel 4650 7150 3    50   Output ~ 0
+PGA_SCLK
+Text GLabel 4550 7150 3    50   Output ~ 0
+PGA_SDI
+Text GLabel 4850 7150 3    50   Input ~ 0
+PGA_SDO
+Wire Wire Line
+	4850 6300 4850 7150
+Wire Wire Line
+	4750 6300 4750 7150
+Wire Wire Line
+	4650 6400 4650 7150
+Wire Wire Line
+	4550 6450 4550 7150
+NoConn ~ 4350 6450
+NoConn ~ 4450 6450
 $EndSCHEMATC
