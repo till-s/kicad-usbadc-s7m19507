@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 5 7
+Sheet 5 8
 Title ""
 Date ""
 Rev ""
@@ -1534,45 +1534,22 @@ Wire Wire Line
 	1950 4450 2450 4450
 Text Notes 4750 5750 0    50   ~ 0
 FIXME:\n - pga output common-mode resistors\n - 4522 input common-mode adjustment resistors\n - pga decoupling\n - ext. trigger\n - 5V switch\n - USB-C\n - buffer input cap/res -> trimmer?\n - offset compensation range resistors
-$Comp
-L fmc:MCP47CVB02-E_UN U11
-U 1 1 612145E1
-P 2450 5900
-F 0 "U11" V 2404 6228 50  0000 L CNN
-F 1 "MCP47CVB02-E_UN" V 2495 6228 50  0000 L CNN
-F 2 "Package_SO:MSOP-10_3x3mm_P0.5mm" H 2450 5850 50  0001 C CNN
-F 3 "" H 2450 5850 50  0001 C CNN
-F 4 "MCP47CVB02-E_UN" H 2450 5900 50  0001 C CNN "Part"
-F 5 "MicroChip" H 2450 5900 50  0001 C CNN "Manufacturer"
-	1    2450 5900
-	0    1    1    0   
-$EndComp
-$Comp
-L power:GNDA #PWR?
-U 1 1 612301C7
-P 2350 6600
-F 0 "#PWR?" H 2350 6350 50  0001 C CNN
-F 1 "GNDA" H 2355 6427 50  0000 C CNN
-F 2 "" H 2350 6600 50  0001 C CNN
-F 3 "" H 2350 6600 50  0001 C CNN
-	1    2350 6600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	2350 6300 2350 6400
-Wire Wire Line
-	2350 4050 2350 5500
-Wire Wire Line
-	2250 2300 2250 5500
 Wire Wire Line
 	2250 2300 2450 2300
+$Sheet
+S 950  5300 1000 550 
+U 60C14D80
+F0 "offset_dac" 50
+F1 "offset_dac.sch" 50
+F2 "DAC_0" O R 1950 5450 50 
+F3 "DAC_1" O R 1950 5700 50 
+$EndSheet
 Wire Wire Line
-	2250 6300 2250 6400
+	2250 2300 2250 5450
 Wire Wire Line
-	2250 6400 2350 6400
-Connection ~ 2350 6400
+	2250 5450 1950 5450
 Wire Wire Line
-	2350 6400 2350 6600
-Text Notes 1350 6650 0    50   ~ 0
-I2C Address 0x60
+	2350 4050 2350 5700
+Wire Wire Line
+	2350 5700 1950 5700
 $EndSCHEMATC
