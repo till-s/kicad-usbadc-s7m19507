@@ -568,31 +568,11 @@ NoConn ~ 4850 6100
 Wire Wire Line
 	3650 7050 3850 7050
 Wire Wire Line
-	3750 6100 3750 6400
-Wire Wire Line
-	3750 6400 4150 6400
-Wire Wire Line
-	4150 6400 4150 6450
-Wire Wire Line
 	4150 6100 4150 6300
 Wire Wire Line
 	4150 6300 4250 6300
 Wire Wire Line
-	4250 6300 4250 6450
-Wire Wire Line
 	4250 6100 4250 6250
-Wire Wire Line
-	4250 6250 4300 6250
-Wire Wire Line
-	4300 6250 4300 6450
-Wire Wire Line
-	4300 6450 4350 6450
-Wire Wire Line
-	4350 6100 4350 6400
-Wire Wire Line
-	4350 6400 4450 6400
-Wire Wire Line
-	4450 6400 4450 6450
 Wire Wire Line
 	4450 6100 4450 6300
 Wire Wire Line
@@ -611,8 +591,6 @@ Wire Wire Line
 	4650 6300 4750 6300
 Wire Wire Line
 	4150 6950 4150 7050
-Wire Wire Line
-	4250 6950 4250 7000
 $Comp
 L Device:R_Small R13
 U 1 1 609A52B1
@@ -1515,7 +1493,7 @@ Text GLabel 5250 1150 1    50   Input ~ 0
 ADC_DCLK
 Text GLabel 7600 3500 2    50   Input ~ 0
 ADC_DOR
-Text GLabel 4950 1150 1    50   Output ~ 0
+Text GLabel 5050 1150 1    50   Output ~ 0
 ADC_SYNC
 Wire Wire Line
 	7150 4300 7600 4300
@@ -1540,11 +1518,11 @@ Wire Wire Line
 NoConn ~ 5350 1800
 Wire Wire Line
 	4950 1150 4950 1800
-Text GLabel 4650 1150 1    50   Output ~ 0
+Text GLabel 4950 1150 1    50   Output ~ 0
 ADC_CSb
 Text GLabel 4750 1150 1    50   Output ~ 0
 ADC_SCLK
-Text GLabel 5050 1150 1    50   BiDi ~ 0
+Text GLabel 4650 1150 1    50   BiDi ~ 0
 ADC_SDIO
 $Comp
 L fmc:XC3S50A-VQ100 U5
@@ -1565,17 +1543,6 @@ Wire Wire Line
 	5050 1150 5050 1800
 NoConn ~ 7150 3100
 $Comp
-L Connector_Generic:Conn_02x02_Odd_Even J5
-U 1 1 610A468D
-P 4250 6650
-F 0 "J5" V 4254 6730 50  0000 L CNN
-F 1 "GPIO2V5" V 4345 6730 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical" H 4250 6650 50  0001 C CNN
-F 3 "~" H 4250 6650 50  0001 C CNN
-	1    4250 6650
-	0    1    1    0   
-$EndComp
-$Comp
 L power:GND #PWR?
 U 1 1 610A5763
 P 6000 7350
@@ -1591,22 +1558,13 @@ $EndComp
 Wire Wire Line
 	5850 7350 6000 7350
 Connection ~ 5850 7350
-Wire Wire Line
-	3550 6350 3650 6350
-Wire Wire Line
-	4250 7000 3650 7000
-Wire Wire Line
-	3650 7000 3650 6350
-Connection ~ 3650 6350
-Wire Wire Line
-	3650 6350 5450 6350
-Text GLabel 4750 7150 3    50   Output ~ 0
+Text GLabel 4850 7150 3    50   Output ~ 0
 PGA_CSb
-Text GLabel 4650 7150 3    50   Output ~ 0
+Text GLabel 4750 7150 3    50   Output ~ 0
 PGA_SCLK
-Text GLabel 4550 7150 3    50   Output ~ 0
+Text GLabel 4650 7150 3    50   Output ~ 0
 PGA_SDI
-Text GLabel 4850 7150 3    50   Input ~ 0
+Text GLabel 4550 7150 3    50   Input ~ 0
 PGA_SDO
 Wire Wire Line
 	4850 6300 4850 7150
@@ -1616,6 +1574,42 @@ Wire Wire Line
 	4650 6400 4650 7150
 Wire Wire Line
 	4550 6450 4550 7150
-NoConn ~ 4350 6450
-NoConn ~ 4450 6450
+Wire Wire Line
+	3550 6350 4150 6350
+Wire Wire Line
+	4150 6450 4150 6350
+Connection ~ 4150 6350
+Wire Wire Line
+	3750 7000 4250 7000
+Wire Wire Line
+	4250 7000 4250 6950
+Wire Wire Line
+	3750 6100 3750 7000
+Wire Wire Line
+	4450 6950 4350 6950
+Wire Wire Line
+	4250 6300 4250 6450
+Wire Wire Line
+	4150 6350 5450 6350
+$Comp
+L Connector_Generic:Conn_02x03_Odd_Even J5
+U 1 1 610A468D
+P 4250 6750
+F 0 "J5" V 4254 6830 50  0000 L CNN
+F 1 "GPIO2V5" V 3800 6600 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical" H 4250 6750 50  0001 C CNN
+F 3 "~" H 4250 6750 50  0001 C CNN
+	1    4250 6750
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4350 6100 4350 6450
+Wire Wire Line
+	4400 6250 4400 6500
+Wire Wire Line
+	4400 6500 4450 6500
+Wire Wire Line
+	4450 6500 4450 6950
+Wire Wire Line
+	4250 6250 4400 6250
 $EndSCHEMATC

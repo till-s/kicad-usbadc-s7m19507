@@ -553,23 +553,6 @@ F 5 "Molex" H 7900 2900 50  0001 C CNN "Manufacturer"
 	1    7900 2900
 	1    0    0    -1  
 $EndComp
-$Comp
-L fmc:100nF_603 C?
-U 1 1 60B85B4A
-P 7400 2900
-AR Path="/6086F2E3/60B85B4A" Ref="C?"  Part="1" 
-AR Path="/60B16D71/60B85B4A" Ref="C49"  Part="1" 
-F 0 "C49" V 7550 2900 50  0000 C CNN
-F 1 "100n" V 7250 2900 50  0000 C CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 7438 2750 50  0001 C CNN
-F 3 "~" H 7400 2900 50  0001 C CNN
-F 4 "GCJ188R71E104KA12D" H 7525 3100 50  0001 C CNN "Part"
-F 5 "Murata" H 7625 3200 50  0001 C CNN "Manufacturer"
-	1    7400 2900
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	7550 2900 7700 2900
 Wire Wire Line
 	5500 2200 5600 2200
 Connection ~ 5500 2200
@@ -589,9 +572,9 @@ ADC_CLK
 Wire Wire Line
 	6550 3200 6950 3200
 Wire Wire Line
-	6550 2900 7250 2900
-Wire Wire Line
 	7900 3100 7900 3200
 Text Notes 3750 4000 0    50   ~ 0
 i2c address 0x68 or 0x6A
+Wire Wire Line
+	6550 2900 7700 2900
 $EndSCHEMATC
