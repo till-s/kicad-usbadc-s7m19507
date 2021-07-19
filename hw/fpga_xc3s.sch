@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 8
+Sheet 3 9
 Title ""
 Date ""
 Rev ""
@@ -130,14 +130,14 @@ Connection ~ 2300 4100
 $Comp
 L power:GND #PWR?
 U 1 1 60AF9070
-P 2300 4950
+P 2300 5350
 AR Path="/6086F2E3/60AF9070" Ref="#PWR?"  Part="1" 
 AR Path="/60AABC24/60AF9070" Ref="#PWR?"  Part="1" 
-F 0 "#PWR?" H 2300 4700 50  0001 C CNN
-F 1 "GND" H 2305 4777 50  0000 C CNN
-F 2 "" H 2300 4950 50  0001 C CNN
-F 3 "" H 2300 4950 50  0001 C CNN
-	1    2300 4950
+F 0 "#PWR?" H 2300 5100 50  0001 C CNN
+F 1 "GND" H 2305 5177 50  0000 C CNN
+F 2 "" H 2300 5350 50  0001 C CNN
+F 3 "" H 2300 5350 50  0001 C CNN
+	1    2300 5350
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -447,7 +447,6 @@ Wire Wire Line
 	8050 5800 8400 5800
 Wire Wire Line
 	8050 5800 8050 6200
-NoConn ~ 2350 4800
 $Comp
 L Device:Jumper_NC_Small JP4
 U 1 1 608B9922
@@ -460,20 +459,7 @@ F 3 "~" H 2050 4700 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	2300 4100 2300 4600
-Wire Wire Line
-	2350 4600 2300 4600
-Connection ~ 2300 4600
-Wire Wire Line
-	2300 4600 2300 4950
-Wire Wire Line
-	1950 4700 1950 4600
-Wire Wire Line
-	1950 4600 2300 4600
-Wire Wire Line
 	2350 4700 2150 4700
-Wire Wire Line
-	3550 1550 3550 1800
 $Comp
 L Connector:TestPoint TP1
 U 1 1 608C58EC
@@ -1203,33 +1189,7 @@ F 3 "" H 9550 5600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3750 1550 3750 1800
-Wire Wire Line
 	3850 1550 3850 1800
-$Comp
-L Connector_Generic:Conn_02x04_Odd_Even J9
-U 1 1 60AB847C
-P 3650 1250
-F 0 "J9" V 3654 1430 50  0000 L CNN
-F 1 "Conn_02x04_Odd_Even" V 3650 1600 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical" H 3650 1250 50  0001 C CNN
-F 3 "~" H 3650 1250 50  0001 C CNN
-	1    3650 1250
-	0    -1   1    0   
-$EndComp
-Wire Wire Line
-	3550 1050 3650 1050
-Wire Wire Line
-	4050 1050 4050 1750
-Connection ~ 3650 1050
-Wire Wire Line
-	3650 1050 3750 1050
-Connection ~ 3750 1050
-Wire Wire Line
-	3750 1050 3850 1050
-Connection ~ 3850 1050
-Wire Wire Line
-	3850 1050 4050 1050
 Connection ~ 4050 1750
 Wire Wire Line
 	4050 1750 4050 1800
@@ -1612,4 +1572,104 @@ Wire Wire Line
 	4450 6500 4450 6950
 Wire Wire Line
 	4250 6250 4400 6250
+$Sheet
+S 1700 6700 1000 450 
+U 60F79994
+F0 "sheet60F7998F" 50
+F1 "digio.sch" 50
+F2 "DATA" B L 1700 6900 50 
+F3 "DIR" I L 1700 7000 50 
+F4 "VCC_IO" I L 1700 6800 50 
+$EndSheet
+Wire Wire Line
+	1700 6900 1250 6900
+Wire Wire Line
+	1700 7000 1250 7000
+Text Label 1250 6900 0    50   ~ 0
+IO_DAT
+Text Label 1250 7000 0    50   ~ 0
+IO_DIR
+$Comp
+L power:+5V #PWR?
+U 1 1 60FB29D3
+P 1250 6750
+AR Path="/6086F2E3/60FB29D3" Ref="#PWR?"  Part="1" 
+AR Path="/60AABC24/60FB29D3" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 1250 6600 50  0001 C CNN
+F 1 "+5V" H 1265 6923 50  0000 C CNN
+F 2 "" H 1250 6750 50  0001 C CNN
+F 3 "" H 1250 6750 50  0001 C CNN
+	1    1250 6750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1700 6800 1250 6800
+Wire Wire Line
+	1250 6800 1250 6750
+NoConn ~ 2350 4800
+Text Notes 550  4350 0    50   ~ 0
+M1 *must* be pulled-down\nduring configuration
+Wire Wire Line
+	1950 4700 1750 4700
+Wire Wire Line
+	1750 5100 2300 5100
+Wire Wire Line
+	1750 4700 1750 5100
+Connection ~ 2300 5100
+Wire Wire Line
+	2300 5100 2300 5350
+Wire Wire Line
+	2300 4100 2300 5100
+Wire Wire Line
+	2350 4600 2100 4600
+Text Label 2100 4600 2    50   ~ 0
+IO_DIR
+Wire Wire Line
+	4050 1000 3750 1000
+Wire Wire Line
+	4050 1000 4050 1750
+Wire Wire Line
+	3650 1050 3650 1000
+Connection ~ 3650 1000
+Wire Wire Line
+	3650 1000 3550 1000
+Wire Wire Line
+	3750 1050 3750 1000
+Connection ~ 3750 1000
+Wire Wire Line
+	3750 1000 3650 1000
+Wire Wire Line
+	3750 1550 3850 1550
+Wire Wire Line
+	3750 1800 3750 1750
+Wire Wire Line
+	3750 1750 3000 1750
+Text Label 3000 1750 2    50   ~ 0
+IO_DAT
+$Comp
+L Connector_Generic:Conn_02x02_Odd_Even J9
+U 1 1 61188A24
+P 3750 1250
+F 0 "J9" V 3754 1330 50  0000 L CNN
+F 1 "PUDC/IN" V 3350 1000 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical" H 3750 1250 50  0001 C CNN
+F 3 "~" H 3750 1250 50  0001 C CNN
+	1    3750 1250
+	0    1    1    0   
+$EndComp
+$Comp
+L Switch:SW_Push SW1
+U 1 1 61189FCC
+P 3550 1300
+F 0 "SW1" V 3750 1600 50  0000 R CNN
+F 1 "PROG_B" V 3650 1700 50  0000 R CNN
+F 2 "Button_Switch_SMD:SW_SPST_PTS810" H 3550 1500 50  0001 C CNN
+F 3 "~" H 3550 1500 50  0001 C CNN
+	1    3550 1300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3550 1000 3550 1100
+Wire Wire Line
+	3550 1500 3550 1800
 $EndSCHEMATC
