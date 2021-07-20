@@ -1373,8 +1373,8 @@ F0 "sheet611E90A8" 50
 F1 "buffer.sch" 50
 F2 "OUT" I R 1900 4050 50 
 $EndSheet
-Text Notes 4750 5750 0    50   ~ 0
-FIXME:\n - ext. trigger\n - 5V switch\n- keepouts under L (power), opamps
+Text Notes 4750 5050 0    50   ~ 0
+FIXME: -*-
 Wire Wire Line
 	2250 2300 2450 2300
 $Sheet

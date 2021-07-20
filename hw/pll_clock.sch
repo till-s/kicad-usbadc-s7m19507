@@ -45,7 +45,6 @@ Wire Wire Line
 	5600 4500 5600 4550
 Wire Wire Line
 	5900 2200 5900 2000
-NoConn ~ 6100 4100
 NoConn ~ 5100 3900
 NoConn ~ 5100 3400
 NoConn ~ 5100 3100
@@ -525,8 +524,47 @@ F 5 "Yageo" V 6450 3200 50  0001 C CNN "Manufacturer"
 	1    6450 3200
 	0    1    1    0   
 $EndComp
+$Comp
+L Connector:Conn_Coaxial J7
+U 1 1 60C731B4
+P 7900 2900
+F 0 "J7" H 8000 2875 50  0000 L CNN
+F 1 "BNC" H 8000 2784 50  0000 L CNN
+F 2 "proj_footprints:BNC_Molex_0731713150" H 7900 2900 50  0001 C CNN
+F 3 " ~" H 7900 2900 50  0001 C CNN
+F 4 "0731713150" H 7900 2900 50  0001 C CNN "Part"
+F 5 "Molex" H 7900 2900 50  0001 C CNN "Manufacturer"
+	1    7900 2900
+	1    0    0    -1  
+$EndComp
+NoConn ~ 6100 3500
+Text GLabel 6950 3200 2    50   Output ~ 0
+ADC_CLK
+Wire Wire Line
+	6550 3200 6950 3200
+Wire Wire Line
+	7900 3100 7900 3200
+Text Notes 3750 4000 0    50   ~ 0
+i2c address 0x68 or 0x6A
+Wire Wire Line
+	6550 2900 7700 2900
+Text Label 6950 2900 0    50   ~ 0
+CLK_OUT
 Wire Wire Line
 	5400 2200 5500 2200
+Connection ~ 5500 2200
+Wire Wire Line
+	5500 2200 5600 2200
+Connection ~ 5600 2200
+Wire Wire Line
+	5600 2200 5700 2200
+Connection ~ 5700 2200
+Wire Wire Line
+	5700 2200 5800 2200
+Wire Wire Line
+	5800 2200 5900 2200
+Connection ~ 5800 2200
+Connection ~ 5900 2200
 $Comp
 L fmc:5P49V5925 U7
 U 1 1 60C70124
@@ -541,42 +579,16 @@ F 5 "Renesas" H 5600 2029 50  0001 C CNN "Manufacturer"
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_Coaxial J7
-U 1 1 60C731B4
-P 7900 2900
-F 0 "J7" H 8000 2875 50  0000 L CNN
-F 1 "BNC" H 8000 2784 50  0000 L CNN
-F 2 "proj_footprints:BNC_Molex_0731713150" H 7900 2900 50  0001 C CNN
-F 3 " ~" H 7900 2900 50  0001 C CNN
-F 4 "0731713150" H 7900 2900 50  0001 C CNN "Part"
-F 5 "Molex" H 7900 2900 50  0001 C CNN "Manufacturer"
-	1    7900 2900
-	1    0    0    -1  
+L Connector:TestPoint TP2
+U 1 1 61006520
+P 6950 4100
+F 0 "TP2" V 6904 4288 50  0000 L CNN
+F 1 "Ref" V 6995 4288 50  0000 L CNN
+F 2 "proj_footprints:TestPoint_Pad_D0.8mm_no_CY" H 7150 4100 50  0001 C CNN
+F 3 "~" H 7150 4100 50  0001 C CNN
+	1    6950 4100
+	0    1    1    0   
 $EndComp
 Wire Wire Line
-	5500 2200 5600 2200
-Connection ~ 5500 2200
-Connection ~ 5900 2200
-Connection ~ 5600 2200
-Wire Wire Line
-	5600 2200 5700 2200
-Connection ~ 5700 2200
-Wire Wire Line
-	5700 2200 5800 2200
-Connection ~ 5800 2200
-Wire Wire Line
-	5800 2200 5900 2200
-NoConn ~ 6100 3500
-Text GLabel 6950 3200 2    50   Output ~ 0
-ADC_CLK
-Wire Wire Line
-	6550 3200 6950 3200
-Wire Wire Line
-	7900 3100 7900 3200
-Text Notes 3750 4000 0    50   ~ 0
-i2c address 0x68 or 0x6A
-Wire Wire Line
-	6550 2900 7700 2900
-Text Label 6950 2900 0    50   ~ 0
-CLK_OUT
+	6100 4100 6950 4100
 $EndSCHEMATC

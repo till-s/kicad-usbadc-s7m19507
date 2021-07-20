@@ -2301,4 +2301,98 @@ F 3 "" H 4200 3000 50  0001 C CNN
 	1    4200 3000
 	1    0    0    -1  
 $EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 61288191
+P 4150 6350
+F 0 "#PWR?" H 4150 6200 50  0001 C CNN
+F 1 "+5V" H 4165 6523 50  0000 C CNN
+F 2 "" H 4150 6350 50  0001 C CNN
+F 3 "" H 4150 6350 50  0001 C CNN
+	1    4150 6350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+2V5 #PWR?
+U 1 1 61288652
+P 4250 6100
+F 0 "#PWR?" H 4250 5950 50  0001 C CNN
+F 1 "+2V5" H 4265 6273 50  0000 C CNN
+F 2 "" H 4250 6100 50  0001 C CNN
+F 3 "" H 4250 6100 50  0001 C CNN
+	1    4250 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+1V8 #PWR?
+U 1 1 61289696
+P 4350 6350
+F 0 "#PWR?" H 4350 6200 50  0001 C CNN
+F 1 "+1V8" H 4365 6523 50  0000 C CNN
+F 2 "" H 4350 6350 50  0001 C CNN
+F 3 "" H 4350 6350 50  0001 C CNN
+	1    4350 6350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 612BF64B
+P 4150 7450
+F 0 "#PWR?" H 4150 7200 50  0001 C CNN
+F 1 "GND" H 4155 7277 50  0000 C CNN
+F 2 "" H 4150 7450 50  0001 C CNN
+F 3 "" H 4150 7450 50  0001 C CNN
+	1    4150 7450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4150 7000 4150 7450
+Text Label 4450 6350 0    50   ~ 0
+-2V5_dig
+Text Label 3050 2850 0    50   ~ 0
+-2V5_dig
+$Comp
+L power:GND #PWR?
+U 1 1 612E5772
+P 4450 7450
+F 0 "#PWR?" H 4450 7200 50  0001 C CNN
+F 1 "GND" H 4455 7277 50  0000 C CNN
+F 2 "" H 4450 7450 50  0001 C CNN
+F 3 "" H 4450 7450 50  0001 C CNN
+	1    4450 7450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4450 7000 4450 7450
+Wire Wire Line
+	4350 7000 4350 7050
+Wire Wire Line
+	4350 7050 4650 7050
+Wire Wire Line
+	4250 7000 4250 7200
+Wire Wire Line
+	4250 7200 4650 7200
+Text GLabel 4650 7200 2    50   BiDi ~ 0
+EXP_IO2_1V8
+Text GLabel 4650 7050 2    50   BiDi ~ 0
+EXP_IO1_1V8
+$Comp
+L Connector_Generic:Conn_02x04_Odd_Even J9
+U 1 1 613F2449
+P 4350 6800
+F 0 "J9" V 4446 6980 50  0000 L CNN
+F 1 "Expansion" V 4355 6980 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical" H 4350 6800 50  0001 C CNN
+F 3 "~" H 4350 6800 50  0001 C CNN
+	1    4350 6800
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	4250 6100 4250 6500
+Wire Wire Line
+	4350 6350 4350 6500
+Wire Wire Line
+	4450 6350 4450 6500
+Wire Wire Line
+	4150 6350 4150 6500
 $EndSCHEMATC

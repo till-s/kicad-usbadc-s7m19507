@@ -387,8 +387,8 @@ $Comp
 L Device:R_Small R18
 U 1 1 6089B5A3
 P 7450 4600
-F 0 "R18" V 7700 4600 50  0000 C CNN
-F 1 "50" V 7550 4600 50  0000 C CNN
+F 0 "R18" V 7400 4450 50  0000 C CNN
+F 1 "50" V 7400 4750 50  0000 C CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" H 7450 4600 50  0001 C CNN
 F 3 "~" H 7450 4600 50  0001 C CNN
 	1    7450 4600
@@ -534,7 +534,6 @@ F 3 "" H 3650 7050 50  0001 C CNN
 $EndComp
 Text GLabel 4550 1150 1    50   Input ~ 0
 FIFO_CLK
-NoConn ~ 7150 4700
 Wire Wire Line
 	3850 6650 3850 7050
 Connection ~ 3850 7050
@@ -675,8 +674,6 @@ Wire Wire Line
 	4550 1150 4550 1800
 Wire Wire Line
 	5150 1150 5150 1800
-NoConn ~ 5750 1800
-NoConn ~ 5850 1800
 Wire Wire Line
 	4250 1150 4250 1800
 Wire Wire Line
@@ -1189,9 +1186,6 @@ F 3 "" H 9550 5600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3850 1550 3850 1800
-Connection ~ 4050 1750
-Wire Wire Line
 	4050 1750 4050 1800
 Wire Wire Line
 	7100 6250 7100 6050
@@ -1422,13 +1416,6 @@ Wire Wire Line
 	8100 3100 8100 3200
 Wire Wire Line
 	7150 3200 8100 3200
-Wire Wire Line
-	7150 2700 7450 2700
-Wire Wire Line
-	7450 2700 7450 2800
-Wire Wire Line
-	7450 2800 7150 2800
-NoConn ~ 7150 2600
 Text GLabel 2100 3300 0    50   BiDi ~ 0
 FIFO_D5
 Text GLabel 2100 3500 0    50   BiDi ~ 0
@@ -1573,13 +1560,14 @@ Wire Wire Line
 Wire Wire Line
 	4250 6250 4400 6250
 $Sheet
-S 1700 6700 1000 450 
+S 1700 6700 850  600 
 U 60F79994
 F0 "sheet60F7998F" 50
 F1 "digio.sch" 50
 F2 "DATA" B L 1700 6900 50 
 F3 "DIR" I L 1700 7000 50 
-F4 "VCC_IO" I L 1700 6800 50 
+F4 "VCC_IO" I R 2550 6800 50 
+F5 "VCC_LOGIC" I L 1700 6800 50 
 $EndSheet
 Wire Wire Line
 	1700 6900 1250 6900
@@ -1592,23 +1580,22 @@ IO_DIR
 $Comp
 L power:+5V #PWR?
 U 1 1 60FB29D3
-P 1250 6750
+P 2700 6650
 AR Path="/6086F2E3/60FB29D3" Ref="#PWR?"  Part="1" 
 AR Path="/60AABC24/60FB29D3" Ref="#PWR?"  Part="1" 
-F 0 "#PWR?" H 1250 6600 50  0001 C CNN
-F 1 "+5V" H 1265 6923 50  0000 C CNN
-F 2 "" H 1250 6750 50  0001 C CNN
-F 3 "" H 1250 6750 50  0001 C CNN
-	1    1250 6750
+F 0 "#PWR?" H 2700 6500 50  0001 C CNN
+F 1 "+5V" H 2715 6823 50  0000 C CNN
+F 2 "" H 2700 6650 50  0001 C CNN
+F 3 "" H 2700 6650 50  0001 C CNN
+	1    2700 6650
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	1700 6800 1250 6800
 Wire Wire Line
 	1250 6800 1250 6750
-NoConn ~ 2350 4800
 Text Notes 550  4350 0    50   ~ 0
-M1 *must* be pulled-down\nduring configuration
+M1 *must* be pulled-down,\nM0 *must* be pulled-up\nduring configuration;
 Wire Wire Line
 	1950 4700 1750 4700
 Wire Wire Line
@@ -1619,27 +1606,13 @@ Connection ~ 2300 5100
 Wire Wire Line
 	2300 5100 2300 5350
 Wire Wire Line
-	2300 4100 2300 5100
-Wire Wire Line
-	2350 4600 2100 4600
-Text Label 2100 4600 2    50   ~ 0
+	2300 4100 2300 4600
+Text Label 7600 2800 0    50   ~ 0
 IO_DIR
 Wire Wire Line
-	4050 1000 3750 1000
-Wire Wire Line
-	4050 1000 4050 1750
-Wire Wire Line
 	3650 1050 3650 1000
-Connection ~ 3650 1000
 Wire Wire Line
 	3650 1000 3550 1000
-Wire Wire Line
-	3750 1050 3750 1000
-Connection ~ 3750 1000
-Wire Wire Line
-	3750 1000 3650 1000
-Wire Wire Line
-	3750 1550 3850 1550
 Wire Wire Line
 	3750 1800 3750 1750
 Wire Wire Line
@@ -1647,29 +1620,164 @@ Wire Wire Line
 Text Label 3000 1750 2    50   ~ 0
 IO_DAT
 $Comp
-L Connector_Generic:Conn_02x02_Odd_Even J9
-U 1 1 61188A24
-P 3750 1250
-F 0 "J9" V 3754 1330 50  0000 L CNN
-F 1 "PUDC/IN" V 3350 1000 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical" H 3750 1250 50  0001 C CNN
-F 3 "~" H 3750 1250 50  0001 C CNN
-	1    3750 1250
-	0    1    1    0   
-$EndComp
-$Comp
 L Switch:SW_Push SW1
 U 1 1 61189FCC
 P 3550 1300
-F 0 "SW1" V 3750 1600 50  0000 R CNN
-F 1 "PROG_B" V 3650 1700 50  0000 R CNN
+F 0 "SW1" H 4050 1300 50  0000 R CNN
+F 1 "PROG_B" H 4350 1300 50  0000 R CNN
 F 2 "Button_Switch_SMD:SW_SPST_PTS810" H 3550 1500 50  0001 C CNN
 F 3 "~" H 3550 1500 50  0001 C CNN
 	1    3550 1300
 	0    -1   -1   0   
 $EndComp
+$Comp
+L Device:LED_Dual_CAC D15
+U 1 1 60F9CC93
+P 1000 5400
+F 0 "D15" V 954 5688 50  0000 L CNN
+F 1 "LED_Front" V 1045 5688 50  0000 L CNN
+F 2 "proj_footprints:LED_Wuerth_Sideview" H 1050 5400 50  0001 C CNN
+F 3 "~" H 1050 5400 50  0001 C CNN
+	1    1000 5400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+2V5 #PWR?
+U 1 1 60F9E431
+P 1000 5000
+AR Path="/6086F2E3/60F9E431" Ref="#PWR?"  Part="1" 
+AR Path="/60AABC24/60F9E431" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 1000 4850 50  0001 C CNN
+F 1 "+2V5" V 1015 5128 50  0000 L CNN
+F 2 "" H 1000 5000 50  0001 C CNN
+F 3 "" H 1000 5000 50  0001 C CNN
+	1    1000 5000
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
-	3550 1000 3550 1100
+	1000 5000 1000 5100
+$Comp
+L Device:R_Small R83
+U 1 1 60FB2976
+P 1350 5700
+F 0 "R83" V 1450 5700 50  0000 C CNN
+F 1 "1k5" V 1250 5700 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 1350 5700 50  0001 C CNN
+F 3 "~" H 1350 5700 50  0001 C CNN
+F 4 " RC0603FR-071K5L " V 1350 5700 50  0001 C CNN "Part"
+F 5 "Yageo" V 1350 5700 50  0001 C CNN "Manufacturer"
+	1    1350 5700
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	1100 5700 1250 5700
+Wire Wire Line
+	2350 4800 1450 4800
+Wire Wire Line
+	2700 6650 2700 6800
+Wire Wire Line
+	2700 6800 2550 6800
+Wire Wire Line
+	7150 2600 7450 2600
+Wire Wire Line
+	7450 2600 7450 2700
+Wire Wire Line
+	7450 2700 7150 2700
+Wire Wire Line
+	7150 2800 7600 2800
+Wire Wire Line
+	2350 4600 2300 4600
+Connection ~ 2300 4600
+Wire Wire Line
+	2300 4600 2300 5100
+$Comp
+L power:+1V8 #PWR?
+U 1 1 6104E276
+P 1250 6750
+AR Path="/6086F2E3/6104E276" Ref="#PWR?"  Part="1" 
+AR Path="/60AABC24/6104E276" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 1250 6600 50  0001 C CNN
+F 1 "+1V8" H 1265 6923 50  0000 C CNN
+F 2 "" H 1250 6750 50  0001 C CNN
+F 3 "" H 1250 6750 50  0001 C CNN
+	1    1250 6750
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R84
+U 1 1 6104F4FE
+P 1350 6000
+F 0 "R84" V 1450 6000 50  0000 C CNN
+F 1 "1k5" V 1250 6000 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 1350 6000 50  0001 C CNN
+F 3 "~" H 1350 6000 50  0001 C CNN
+F 4 " RC0603FR-071K5L " V 1350 6000 50  0001 C CNN "Part"
+F 5 "Yageo" V 1350 6000 50  0001 C CNN "Manufacturer"
+	1    1350 6000
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	1450 4800 1450 5700
+Wire Wire Line
+	900  5700 900  6000
+Wire Wire Line
+	900  6000 1250 6000
+Text Label 1600 6000 0    50   ~ 0
+LED_FRONT_G
+Wire Wire Line
+	1600 6000 1450 6000
+Text Label 7350 4700 0    50   ~ 0
+LED_FRONT_G
+Wire Wire Line
+	7350 4700 7150 4700
+Text GLabel 5850 1150 1    50   BiDi ~ 0
+EXP_IO1_1V8
+$Comp
+L power:GND #PWR?
+U 1 1 61391125
+P 3250 1000
+AR Path="/6086F2E3/61391125" Ref="#PWR?"  Part="1" 
+AR Path="/60AABC24/61391125" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 3250 750 50  0001 C CNN
+F 1 "GND" H 3255 827 50  0000 C CNN
+F 2 "" H 3250 1000 50  0001 C CNN
+F 3 "" H 3250 1000 50  0001 C CNN
+	1    3250 1000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 1000 3550 1000
+Connection ~ 3550 1000
+Text GLabel 5750 1150 1    50   BiDi ~ 0
+EXP_IO2_1V8
+Wire Wire Line
+	5850 1150 5850 1800
+Wire Wire Line
+	5750 1150 5750 1800
+Wire Wire Line
+	3750 1050 3750 1000
+Wire Wire Line
+	3750 1000 3650 1000
+Connection ~ 3650 1000
+Wire Wire Line
+	3850 1800 3850 1700
+Wire Wire Line
+	3850 1700 3750 1700
+Wire Wire Line
+	3750 1700 3750 1550
 Wire Wire Line
 	3550 1500 3550 1800
+Wire Wire Line
+	3550 1000 3550 1100
+$Comp
+L Connector_Generic:Conn_02x02_Odd_Even J12
+U 1 1 6102674D
+P 3650 1350
+F 0 "J12" V 3654 1162 50  0000 R CNN
+F 1 "PUDC_B/IN" H 4500 1300 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical" H 3650 1350 50  0001 C CNN
+F 3 "~" H 3650 1350 50  0001 C CNN
+	1    3650 1350
+	0    -1   -1   0   
+$EndComp
 $EndSCHEMATC
