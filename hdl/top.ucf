@@ -1,53 +1,14 @@
-# Bank 0
-
-NET "IO_0"                 LOC = "P90" | IOSTANDARD = "LVCMOS18";
-NET "IO_L05_P_0"           LOC = "P93" | IOSTANDARD = "LVCMOS18";
-NET "IO_L05_N_0"           LOC = "P94" | IOSTANDARD = "LVCMOS18";
-
 # Bank 2
-net "IO_L01_N_2"           LOC = "P25" | IOSTANDARD = "LVCMOS25";
-net "IO_L02_N_2"           LOC = "P27" | IOSTANDARD = "LVCMOS25";
-net "IO_L03_P_2"           LOC = "P28" | IOSTANDARD = "LVCMOS25";
-net "IO_L04_P_2"           LOC = "P29" | IOSTANDARD = "LVCMOS25";
-net "IO_L03_N_2"           LOC = "P30" | IOSTANDARD = "LVCMOS25";
-net "IO_L04_N_2"           LOC = "P31" | IOSTANDARD = "LVCMOS25";
-net "IO_L05_P_2"           LOC = "P32" | IOSTANDARD = "LVCMOS25";
-net "IO_L06_P_2"           LOC = "P33" | IOSTANDARD = "LVCMOS25";
-net "IO_L05_N_2"           LOC = "P34" | IOSTANDARD = "LVCMOS25";
-net "IO_L06_N_2"           LOC = "P35" | IOSTANDARD = "LVCMOS25";
-net "IO_L07_P_2"           LOC = "P36" | IOSTANDARD = "LVCMOS25";
-net "IO_L07_N_2"           LOC = "P37" | IOSTANDARD = "LVCMOS25";
+#NET "IO_N06_N_0" LOC = P99
+NET "IO_N06_N_0" LOC = P84 | IOSTANDARD = "LVCMOS25";
+#NET "IO_L08_P_2" LOC = P40
 
-net "IO_L08_P_2"           LOC = "P40" | IOSTANDARD = "LVCMOS25";
-net "IO_L08_N_2"           LOC = "P41" | IOSTANDARD = "LVCMOS25";
-
-net "IO_L09_P_2"           LOC = "P43" | IOSTANDARD = "LVCMOS25";
-net "IO_L09_N_2"           LOC = "P44" | IOSTANDARD = "LVCMOS25";
-
-net "IO_2"                 LOC = "P46" | IOSTANDARD = "LVCMOS25";
-
-net "IO_L10_P_2"           LOC = "P48" | IOSTANDARD = "LVCMOS25";
-net "IO_L10_N_2"           LOC = "P49" | IOSTANDARD = "LVCMOS25";
-net "IO_L11_P_2"           LOC = "P50" | IOSTANDARD = "LVCMOS25";
-net "IO_L11_N_2"           LOC = "P51" | IOSTANDARD = "LVCMOS25";
-net "IO_L12_P_2"           LOC = "P52" | IOSTANDARD = "LVCMOS25";
-net "IO_L12_N_2"           LOC = "P53" | IOSTANDARD = "LVCMOS25";
-
-# Bank 3
-net "IO_L01_P_3"           LOC = "P3"  | IOSTANDARD = "LVCMOS18";
-net "IO_L01_N_3"           LOC = "P4"  | IOSTANDARD = "LVCMOS18";
-net "IO_L02_P_3"           LOC = "P5"  | IOSTANDARD = "LVCMOS18";
-net "IO_L02_N_3"           LOC = "P6"  | IOSTANDARD = "LVCMOS18";
-net "IP_3"                 LOC = "P7"  | IOSTANDARD = "LVCMOS18";
-net "IO_L03_P_3"           LOC = "P9"  | IOSTANDARD = "LVCMOS18";
-net "IO_L03_N_3"           LOC = "P10" | IOSTANDARD = "LVCMOS18";
-net "IO_L04_P_3"           LOC = "P12" | IOSTANDARD = "LVCMOS18";
-net "IO_L04_N_3"           LOC = "P13" | IOSTANDARD = "LVCMOS18";
-net "IO_L05_P_3"           LOC = "P15" | IOSTANDARD = "LVCMOS18";
-net "IO_L05_N_3"           LOC = "P16" | IOSTANDARD = "LVCMOS18";
-net "IO_L06_P_3"           LOC = "P19" | IOSTANDARD = "LVCMOS18";
-net "IO_L06_N_3"           LOC = "P20" | IOSTANDARD = "LVCMOS18";
-
-# Timing
-NET "IO_0"                 TNM_NET = IO_0;
-TIMESPEC TS_IO_0 = PERIOD "IO_0" 40 ns HIGH 50%;
+NET "IO_L08_P_2" LOC = P77 | IOSTANDARD = "LVCMOS25";
+#NET "IO_L08_N_2" LOC = P41
+NET "IO_L08_N_2" LOC = P85 | IOSTANDARD = "LVCMOS25";
+#NET "IO_L09_N_2" LOC = P44
+NET "IO_L09_N_2" LOC = P78 | IOSTANDARD = "LVCMOS25";
+#NET "IO_L10_N_2" LOC = P49
+NET "IO_L10_N_2" LOC = P86 | IOSTANDARD = "LVCMOS25";
+#NET "IO_L11_P_2" LOC = P50
+NET "IO_L11_P_2" LOC = P83 | IOSTANDARD = "LVCMOS25";
