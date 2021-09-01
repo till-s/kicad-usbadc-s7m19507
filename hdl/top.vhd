@@ -260,95 +260,8 @@ begin
    ila_trg0(6) <= fifoWVld;
    ila_trg0(7) <= fifoWRdy;
 
---   ila_trg1    <= fifoRDat;
---   ila_trg2    <= fifoWDat;
-
-   GEN_FIFO_CHECK : if ( false ) generate
-
-      signal lastRDb      : std_logic := '1';
-      signal lastWR       : std_logic := '0';
-
-      signal pulseOverlap : std_logic := '0';
-
-      signal diffNRW      : signed(3 downto 0) := (others => '0');
-      signal diffOVFL     : std_logic := '0';
-
-      signal timer        : unsigned(3 downto 0) := (others => '1');
-      signal minPW        : unsigned(3 downto 0) := (others => '1');
-      signal minBB        : unsigned(3 downto 0) := (others => '1');
-
-   begin
-
-      ila_trg1(3 downto 0) <= std_logic_vector(diffNRW);
-      ila_trg1(4)          <= diffOVFL;
-      ila_trg1(7)          <= pulseOverlap;
-
-      ila_trg2(3 downto 0) <= std_logic_vector(minPW);
-      ila_trg2(7 downto 4) <= std_logic_vector(minBB);
-
-      P_CHECK : process ( fifoClk ) is
-         variable newDiff : signed(3 downto 0);
-      begin
-         if  ( rising_edge( fifoClk ) ) then
-            newDiff := diffNRW;
-            lastRDb <= fifoRDb;
-            lastWR  <= fifoWR;
-
-            if ( timer < unsigned( to_signed( -1, timer'length ) ) ) then
-               timer <= timer + 1;
-            end if;
-
-            if ( (fifoRDb = '0') and (fifoWR = '1') ) then
-               pulseOverlap <= '1';
-            end if;
-
-            -- assume no overlaps
-            if ( (lastRDb = '1') and (fifoRDb = '0') ) then
-               -- start of RD
-               if ( timer < minBB ) then
-                  minBB <= timer;
-               end if;
-               timer <= to_unsigned(0, timer'length);
-            end if;
-            if ( (lastWR  = '0') and (fifoWR  = '1') ) then
-               -- start of WR
-               if ( timer < minBB ) then
-                  minBB <= timer;
-               end if;
-               timer <= to_unsigned(0, timer'length);
-            end if;
-
-            if ( (lastRDb = '0') and (fifoRDb = '1') ) then
-               -- end of RD
-               -- clock time to next pulse
-               timer <= to_unsigned(0, timer'length);
-               newDiff := diffNRW + 1;
-               if ( newDiff < diffNRW ) then
-                  diffOVFL <= '1';
-               end if;
-               if ( timer < minPW ) then
-                  minPW <= timer;
-               end if;
-            end if;
-
-            if ( (lastWR = '1') and (fifoWR = '0') ) then
-               -- end of WR
-               -- clock time to next pulse
-               timer <= to_unsigned(0, timer'length);
-               newDiff := diffNRW - 1;
-               if ( newDiff > diffNRW ) then
-                  diffOVFL <= '1';
-               end if;
-               if ( timer < minPW ) then
-                  minPW <= timer;
-               end if;
-            end if;
-
-            diffNRW <= newDiff;
-         end if;
-      end process P_CHECK;
-
-   end generate GEN_FIFO_CHECK;
+   ila_trg1    <= fifoRDat;
+   ila_trg2    <= fifoWDat;
 
    U_ICON : component chipscope_icon
       port map (
@@ -437,11 +350,9 @@ begin
             wrdy         => fifoWRdy,
 
             bbo          => bbo,
-            bbi          => bbi,
-            dbg          => ila_trg2
+            bbi          => bbi
          );
 
-      ila_trg1 <= bbo;
    end generate GEN_BITBANG;
 
 
