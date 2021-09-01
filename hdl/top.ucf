@@ -1,9 +1,10 @@
 # Bank 0
 
-NET "IO_0"                 LOC = "P90" | IOSTANDARD = "LVCMOS18";
 NET "IO_L02_N_0"           LOC = "P84" | IOSTANDARD = "LVCMOS18";
+NET "IO_0"                 LOC = "P90" | IOSTANDARD = "LVCMOS18";
 NET "IO_L05_P_0"           LOC = "P93" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 NET "IO_L05_N_0"           LOC = "P94" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
+NET "IP_0"                 LOC = "P97" | IOSTANDARD = "LVCMOS18" | PULLUP="TRUE";
 
 # Bank 2
 net "IO_L01_N_2"           LOC = "P25" | IOSTANDARD = "LVCMOS25";

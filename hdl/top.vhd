@@ -23,13 +23,14 @@ use ieee.numeric_std.all;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx primitives in this code.
---library unisim;
---use unisim.vcomponents.all;
+library unisim;
+use unisim.vcomponents.all;
 
 entity top is
    port (
       IO_0         : in    std_logic;
       IO_L02_N_0   : in    std_logic;
+      IP_0         : in    std_logic := 'H';
 
       IO_L05_P_0   : inout std_logic := 'Z';
       IO_L05_N_0   : inout std_logic := 'Z';
@@ -84,10 +85,13 @@ architecture rtl of top is
    type FifoVariantType is ( LOOPBACK, BITBANG );
 
    constant FIFO_VARIANT_C : FifoVariantType := BITBANG;
+   constant GEN_ICAP_C     : boolean         := true;
 
    constant BB_INIT_C : std_logic_vector(7 downto 0) := x"F1";
 
    signal led         : std_logic_vector(NUM_LED_C - 1 downto 0) := (others => '1');
+
+   signal J12B        : std_logic;
 
    signal fifoData_i  : std_logic_vector(7 downto 0);
    signal fifoData_o  : std_logic_vector(7 downto 0) := (others => '0');
@@ -133,7 +137,6 @@ architecture rtl of top is
 
    signal cnt         : unsigned(23 downto 0) := (others => '0');
    signal pllCnt      : unsigned(25 downto 0) := (others => '0');
-   signal fifoRDatR   : std_logic_vector(7 downto 0)  := BB_INIT_C;
 
    component chipscope_ila is
       PORT (
@@ -203,9 +206,6 @@ begin
    P_REG : process ( fifoClk ) is
    begin
       if ( rising_edge( fifoClk ) ) then
-         if ( (fifoRVld and fifoRRdy) = '1' ) then
-            fifoRDatR <= fifoRDat;
-         end if;
          cnt <= cnt + 1;
       end if;
    end process P_REG;
@@ -217,9 +217,11 @@ begin
       end if;
    end process P_REG1;
  
-   led(4 downto 2) <= fifoRDatR(4 downto 2);
+   led(4 downto 2) <= fifoRDat(4 downto 2);
    led(1)          <= pllCnt(pllCnt'left);
    led(0)          <= cnt(cnt'left);
+
+   J12B            <= IP_0;
 
    U_FIFO_IF : entity work.Ft240Fifo
       generic map (
@@ -255,11 +257,98 @@ begin
 
    ila_trg0(4) <= fifoTXFull;
    ila_trg0(5) <= fifoWR;
-   ila_trg0(6) <= scl_i; --fifoWVld;
-   ila_trg0(7) <= sda_i; --fifoWRdy;
+   ila_trg0(6) <= fifoWVld;
+   ila_trg0(7) <= fifoWRdy;
 
-   ila_trg1    <= fifoRDat;
-   ila_trg2    <= fifoWDat;
+--   ila_trg1    <= fifoRDat;
+--   ila_trg2    <= fifoWDat;
+
+   GEN_FIFO_CHECK : if ( false ) generate
+
+      signal lastRDb      : std_logic := '1';
+      signal lastWR       : std_logic := '0';
+
+      signal pulseOverlap : std_logic := '0';
+
+      signal diffNRW      : signed(3 downto 0) := (others => '0');
+      signal diffOVFL     : std_logic := '0';
+
+      signal timer        : unsigned(3 downto 0) := (others => '1');
+      signal minPW        : unsigned(3 downto 0) := (others => '1');
+      signal minBB        : unsigned(3 downto 0) := (others => '1');
+
+   begin
+
+      ila_trg1(3 downto 0) <= std_logic_vector(diffNRW);
+      ila_trg1(4)          <= diffOVFL;
+      ila_trg1(7)          <= pulseOverlap;
+
+      ila_trg2(3 downto 0) <= std_logic_vector(minPW);
+      ila_trg2(7 downto 4) <= std_logic_vector(minBB);
+
+      P_CHECK : process ( fifoClk ) is
+         variable newDiff : signed(3 downto 0);
+      begin
+         if  ( rising_edge( fifoClk ) ) then
+            newDiff := diffNRW;
+            lastRDb <= fifoRDb;
+            lastWR  <= fifoWR;
+
+            if ( timer < unsigned( to_signed( -1, timer'length ) ) ) then
+               timer <= timer + 1;
+            end if;
+
+            if ( (fifoRDb = '0') and (fifoWR = '1') ) then
+               pulseOverlap <= '1';
+            end if;
+
+            -- assume no overlaps
+            if ( (lastRDb = '1') and (fifoRDb = '0') ) then
+               -- start of RD
+               if ( timer < minBB ) then
+                  minBB <= timer;
+               end if;
+               timer <= to_unsigned(0, timer'length);
+            end if;
+            if ( (lastWR  = '0') and (fifoWR  = '1') ) then
+               -- start of WR
+               if ( timer < minBB ) then
+                  minBB <= timer;
+               end if;
+               timer <= to_unsigned(0, timer'length);
+            end if;
+
+            if ( (lastRDb = '0') and (fifoRDb = '1') ) then
+               -- end of RD
+               -- clock time to next pulse
+               timer <= to_unsigned(0, timer'length);
+               newDiff := diffNRW + 1;
+               if ( newDiff < diffNRW ) then
+                  diffOVFL <= '1';
+               end if;
+               if ( timer < minPW ) then
+                  minPW <= timer;
+               end if;
+            end if;
+
+            if ( (lastWR = '1') and (fifoWR = '0') ) then
+               -- end of WR
+               -- clock time to next pulse
+               timer <= to_unsigned(0, timer'length);
+               newDiff := diffNRW - 1;
+               if ( newDiff > diffNRW ) then
+                  diffOVFL <= '1';
+               end if;
+               if ( timer < minPW ) then
+                  minPW <= timer;
+               end if;
+            end if;
+
+            diffNRW <= newDiff;
+         end if;
+      end process P_CHECK;
+
+   end generate GEN_FIFO_CHECK;
 
    U_ICON : component chipscope_icon
       port map (
@@ -304,17 +393,9 @@ begin
       constant BB_I2C_SCL_C  : natural := 5;
 
       constant BB_I2C_MOD_C  : natural := 6;
-
-      constant I2C_HPER_C    : integer := integer( ceil ( 1.0*FIFO_CLOCK_FREQ_C/1.0E5/2.0 ) ) - 1;
-      constant I2C_TIMO_C    : integer := integer( ceil ( 0.2*FIFO_CLOCK_FREQ_C ) ) - 1;
-      constant I2C_LD_TIMO_C : integer := integer( floor( log2( real( I2C_TIMO_C ) ) ) )  + 1;
-
-      signal   i2c_timo      : unsigned(I2C_LD_TIMO_C - 1 downto 0) := (others => '0');
+      constant BB_XXX_XXX_C  : natural := 7;
 
    begin
-
-
-      bbo               <= fifoRDatR;
 
       spi_csb           <= bbo(BB_SPI_CSb_C);
       spi_sck           <= bbo(BB_SPI_SCK_C);
@@ -329,52 +410,111 @@ begin
       scl_t             <= bbo(BB_I2C_SCL_C);
 
       bbi(BB_I2C_SDA_C) <= sda_i;
+      bbi(BB_I2C_SCL_C) <= scl_i;
 
       bbi(BB_I2C_MOD_C) <= bbo(BB_I2C_MOD_C);
+      bbi(BB_XXX_XXX_C) <= bbi(BB_XXX_XXX_C);
 
-      -- due to clock stretching SCL input may be asynchronous
-      U_SCLI_SYNC : entity work.SynchronizerBit
+      U_BITBANG : entity work.BitBangIF
          generic map (
-            RSTPOL_G    => '1'
+            I2C_SCL_G    => BB_I2C_SCL_C,
+            BBO_INIT_G   => BB_INIT_C,
+            CLOCK_FREQ_G => FIFO_CLOCK_FREQ_C
          )
          port map (
-            clk         => fifoClk,
-            rst         => fifoRst,
-            datInp(0)   => scl_i,
-            datOut(0)   => bbi(BB_I2C_SCL_C)
+            clk          => fifoClk, 
+            rst          => fifoRst, 
+            
+            -- i2cDis is registered together with the data
+            i2cDis       => fifoRDat(BB_I2C_MOD_C),
+
+            rdat         => fifoRDat,
+            rvld         => fifoRVld,
+            rrdy         => fifoRRdy,
+
+            wdat         => fifoWDat,
+            wvld         => fifoWVld,
+            wrdy         => fifoWRdy,
+
+            bbo          => bbo,
+            bbi          => bbi,
+            dbg          => ila_trg2
          );
 
-      P_BITBANG : process ( fifoClk ) is
+      ila_trg1 <= bbo;
+   end generate GEN_BITBANG;
+
+
+   GEN_ICAP : if ( GEN_ICAP_C ) generate
+
+      subtype  IcapSlv8      is std_logic_vector(7 downto 0);
+      type     IcapSlv8Array is array (natural range <>) of IcapSlv8;
+
+	  constant ICAP_WAIT_C   : integer := 4;
+
+      constant ICAP_PROG_C   : IcapSlv8Array (12 downto 1) := (
+         -- UG332
+         x"FF", -- Dummy      (hi)
+         x"FF", --            (lo)
+         x"AA", -- SYNC       (hi)
+         x"99", --            (lo)
+         x"30", -- CMD        (hi)
+         x"A1", --            (lo)
+         x"00", -- REBOOT     (hi)
+         x"0E", --            (lo)
+         x"20", -- NOOP       (hi)
+         x"00", --            (lo)
+         x"20", -- NOOP       (hi)
+         x"00"  --            (lo)
+      );
+
+      constant ICAP_IDX_INIT_C : integer := ICAP_WAIT_C + ICAP_PROG_C'left;
+
+      subtype  IcapIdxType  is integer range ICAP_IDX_INIT_C downto ICAP_PROG_C'right;
+
+      signal icapCEb         : std_ulogic                   := '0';
+      signal icapDat         : std_logic_vector(7 downto 0) := (others => '1');
+
+      signal icapIdx         : IcapIdxType := ICAP_IDX_INIT_C;
+
+   begin
+      P_ICAP : process ( fifoClk ) is
       begin
          if ( rising_edge( fifoClk ) ) then
-
-            i2c_timo <= i2c_timo - 1;
-
-            -- if i2c_timeo is already 0 then this logic reverts the decrement
-            if ( i2c_timo < (I2C_TIMO_C - I2C_HPER_C) ) then
-               if ( (bbo(BB_I2C_SCL_C) = bbi(BB_I2C_SCL_C)) or (i2c_timo = 0) ) then
-                  fifoRRdy <= '1';
-                  i2c_timo <= (others => '0');
+            if ( fifoRst = '1' ) then
+               icapCEb <= '1';
+               icapIdx <= ICAP_IDX_INIT_C;
+               icapDat <= (others => '1');
+            else
+               if ( (J12B = '1') and icapIdx >= ICAP_PROG_C'low  and icapIdx <= ICAP_PROG_C'high ) then
+                  icapDat <= ICAP_PROG_C(icapIdx);
+                  icapCEb <= '0';
                else
+                  icapCEb <= '1';
+               end if;
+               if ( icapIdx > 0 ) then
+                  icapIdx <= icapIdx - 1;
                end if;
             end if;
-
-            if ( fifoRRdy = '1' and fifoRVld = '1' ) then
-               -- record inputs
-               fifoWDat <= bbi;
-               fifoWVld <= '1';
-               if ( bbo(BB_I2C_MOD_C) = '0' ) then
-                  fifoRRdy <= '0';
-                  i2c_timo <= to_unsigned(I2C_TIMO_C, i2c_timo'length);
-               end if;
-            end if;
-            if ( fifoWRdy = '1' and fifoWVld = '1' ) then
-               fifoWVld <= '0';
-            end if;
-
          end if;
-      end process P_BITBANG;
+      end process P_ICAP;
 
-   end generate GEN_BITBANG;
+      U_ICAP : component ICAP_SPARTAN3A
+         port map (
+            BUSY  => open,    -- : out std_ulogic;
+            O     => open,    -- : out std_logic_vector(7 downto 0);
+            CE    => icapCEb, -- : in  std_ulogic;
+            CLK   => fifoClk, -- : in  std_ulogic;
+            I(0)  => icapDat(7), -- : in  std_logic_vector(7 downto 0);
+            I(1)  => icapDat(6), -- : in  std_logic_vector(7 downto 0);
+            I(2)  => icapDat(5), -- : in  std_logic_vector(7 downto 0);
+            I(3)  => icapDat(4), -- : in  std_logic_vector(7 downto 0);
+            I(4)  => icapDat(3), -- : in  std_logic_vector(7 downto 0);
+            I(5)  => icapDat(2), -- : in  std_logic_vector(7 downto 0);
+            I(6)  => icapDat(1), -- : in  std_logic_vector(7 downto 0);
+            I(7)  => icapDat(0), -- : in  std_logic_vector(7 downto 0);
+            WRITE => '0'      -- : in  std_ulogic
+         );
+   end generate GEN_ICAP;
 
 end rtl;
