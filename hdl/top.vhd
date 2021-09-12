@@ -29,11 +29,26 @@ use unisim.vcomponents.all;
 entity top is
    port (
       IO_0         : in    std_logic;
+      IO_L02_P_0   : in    std_logic;
       IO_L02_N_0   : in    std_logic;
       IP_0         : in    std_logic := 'H';
 
       IO_L05_P_0   : inout std_logic := 'Z';
       IO_L05_N_0   : inout std_logic := 'Z';
+      IO_L06_P_0   : inout std_logic := 'Z';
+
+      IO_L01_P_1   : inout std_logic := 'Z';
+      IO_L01_N_1   : inout std_logic := 'Z';
+      IO_L02_P_1   : inout std_logic := 'Z';
+      IO_L02_N_1   : inout std_logic := 'Z';
+      IO_L03_P_1   : inout std_logic := 'Z';
+      IO_L03_N_1   : inout std_logic := 'Z';
+      IO_L04_P_1   : inout std_logic := 'Z';
+      IO_L04_N_1   : inout std_logic := 'Z';
+      IO_L05_P_1   : inout std_logic := 'Z';
+      IO_L05_N_1   : inout std_logic := 'Z';
+      IO_L06_P_1   : inout std_logic := 'Z';
+      IO_L06_N_1   : inout std_logic := 'Z';
 
       IO_L01_N_2   : inout std_logic := 'Z';
       IO_L02_N_2   : inout std_logic := 'Z';
@@ -86,6 +101,7 @@ architecture rtl of top is
 
    constant FIFO_VARIANT_C : FifoVariantType := BITBANG;
    constant GEN_ICAP_C     : boolean         := true;
+   constant GEN_ILA_C      : boolean         := false;
 
    constant BB_INIT_C : std_logic_vector(7 downto 0) := x"F1";
 
@@ -122,6 +138,9 @@ architecture rtl of top is
    signal pllClk      : std_logic;
    signal pllRst      : std_logic := '0';
 
+   signal chnlAClk    : std_logic;
+   signal chnlBClk    : std_logic;
+
    signal sda_i       : std_logic;
    signal sda_t       : std_logic := '1';
    signal scl_i       : std_logic;
@@ -132,8 +151,22 @@ architecture rtl of top is
    signal spi_mosi    : std_logic := '0';
    signal spi_miso    : std_logic;
 
+   signal adc_i       : std_logic_vector(7 downto 0);
+   signal adcDor_i    : std_logic;
+   signal adcDClk     : std_logic;
+   signal adcDRst     : std_logic := '0';
+
    signal bbi         : std_logic_vector( 7 downto 0) := (others => '0');
    signal bbo         : std_logic_vector( 7 downto 0) := BB_INIT_C;
+
+   -- when ioDir is low then ioDat is an input otherwise an output
+   signal ioDir_i     : std_logic;
+   signal ioDir_o     : std_logic := '0';
+   signal ioDir_t     : std_logic := '1';
+
+   signal ioDat_i     : std_logic;
+   signal ioDat_o     : std_logic := '0';
+   signal ioDat_t     : std_logic := '1';
 
    signal cnt         : unsigned(23 downto 0) := (others => '0');
    signal pllCnt      : unsigned(25 downto 0) := (others => '0');
@@ -163,6 +196,7 @@ begin
 
    fifoClk    <= IO_0;
    pllClk     <= IO_L02_N_0;
+   adcDClk    <= IO_L02_P_0;
 
    -- FIFO
    U_FIFO_BUF : entity work.IOBufArray
@@ -203,6 +237,15 @@ begin
    IO_L05_N_0 <= 'Z' when scl_t = '1' else '0';
    scl_i      <= IO_L05_N_0;
 
+   IO_L05_N_1 <= 'Z' when ioDir_t = '1' else ioDir_o;
+   ioDir_i    <= IO_L05_N_1;
+
+   IO_L06_P_1 <= 'Z' when ioDat_t = '1' else ioDat_o;
+   ioDat_i    <= IO_L06_P_1;
+
+   ioDir_t    <= '0';
+   ioDat_t    <= not ioDir_o;
+
    P_REG : process ( fifoClk ) is
    begin
       if ( rising_edge( fifoClk ) ) then
@@ -210,9 +253,9 @@ begin
       end if;
    end process P_REG;
 
-   P_REG1 : process ( pllClk ) is
+   P_REG1 : process ( chnlAClk ) is
    begin
-      if ( rising_edge( pllClk ) ) then
+      if ( rising_edge( chnlAClk ) ) then
          pllCnt <= pllCnt + 1;
       end if;
    end process P_REG1;
@@ -220,6 +263,18 @@ begin
    led(4 downto 2) <= fifoRDat(4 downto 2);
    led(1)          <= pllCnt(pllCnt'left);
    led(0)          <= cnt(cnt'left);
+
+   -- ADC
+   adcDor_i        <= IO_L04_P_1;
+
+   adc_i(0)        <= IO_L05_P_1;
+   adc_i(1)        <= IO_L04_N_1;
+   adc_i(2)        <= IO_L03_N_1;
+   adc_i(3)        <= IO_L03_P_1;
+   adc_i(4)        <= IO_L02_N_1;
+   adc_i(5)        <= IO_L02_P_1;
+   adc_i(6)        <= IO_L01_N_1;
+   adc_i(7)        <= IO_L01_P_1;
 
    J12B            <= IP_0;
 
@@ -263,6 +318,8 @@ begin
    ila_trg1    <= fifoRDat;
    ila_trg2    <= fifoWDat;
 
+   GEN_ILA : if ( GEN_ILA_C ) generate
+
    U_ICON : component chipscope_icon
       port map (
          control0 => ila_ctrl
@@ -276,6 +333,8 @@ begin
          TRIG1   => ila_trg1,
          TRIG2   => ila_trg2
       );
+
+   end generate GEN_ILA;
 
    fifoData_t <= (others => fifoIOT);
 
@@ -328,29 +387,33 @@ begin
       bbi(BB_I2C_MOD_C) <= bbo(BB_I2C_MOD_C);
       bbi(BB_XXX_XXX_C) <= bbi(BB_XXX_XXX_C);
 
-      U_BITBANG : entity work.BitBangIF
+      U_COMMAND_WRAPPER : entity work.CommandWrapper
          generic map (
             I2C_SCL_G    => BB_I2C_SCL_C,
             BBO_INIT_G   => BB_INIT_C,
-            CLOCK_FREQ_G => FIFO_CLOCK_FREQ_C
+            FIFO_FREQ_G  => FIFO_CLOCK_FREQ_C
          )
          port map (
             clk          => fifoClk, 
             rst          => fifoRst, 
             
-            -- i2cDis is registered together with the data
-            i2cDis       => fifoRDat(BB_I2C_MOD_C),
+            datIb        => fifoRDat,
+            vldIb        => fifoRVld,
+            rdyIb        => fifoRRdy,
 
-            rdat         => fifoRDat,
-            rvld         => fifoRVld,
-            rrdy         => fifoRRdy,
-
-            wdat         => fifoWDat,
-            wvld         => fifoWVld,
-            wrdy         => fifoWRdy,
+            datOb        => fifoWDat,
+            vldOb        => fifoWVld,
+            rdyOb        => fifoWRdy,
 
             bbo          => bbo,
-            bbi          => bbi
+            bbi          => bbi,
+
+            adcClk       => pllClk,
+            adcRst       => pllRst,
+
+            adcDataDDR   => adc_i,
+            chnlAClk     => chnlAClk,
+            chnlBClk     => chnlBClk
          );
 
    end generate GEN_BITBANG;

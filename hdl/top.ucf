@@ -1,10 +1,26 @@
 # Bank 0
 
+NET "IO_L02_P_0"           LOC = "P83" | IOSTANDARD = "LVCMOS18";
 NET "IO_L02_N_0"           LOC = "P84" | IOSTANDARD = "LVCMOS18";
 NET "IO_0"                 LOC = "P90" | IOSTANDARD = "LVCMOS18";
 NET "IO_L05_P_0"           LOC = "P93" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 NET "IO_L05_N_0"           LOC = "P94" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 NET "IP_0"                 LOC = "P97" | IOSTANDARD = "LVCMOS18" | PULLUP="TRUE";
+NET "IO_L06_P_0"           LOC = "P98" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
+
+# Bank 1
+NET "IO_L01_P_1"           LOC = "P56" | IOSTANDARD = "LVCMOS18";
+NET "IO_L01_N_1"           LOC = "P57" | IOSTANDARD = "LVCMOS18";
+NET "IO_L02_P_1"           LOC = "P59" | IOSTANDARD = "LVCMOS18";
+NET "IO_L02_N_1"           LOC = "P60" | IOSTANDARD = "LVCMOS18";
+NET "IO_L03_P_1"           LOC = "P61" | IOSTANDARD = "LVCMOS18";
+NET "IO_L03_N_1"           LOC = "P62" | IOSTANDARD = "LVCMOS18";
+NET "IO_L04_P_1"           LOC = "P64" | IOSTANDARD = "LVCMOS18";
+NET "IO_L04_N_1"           LOC = "P65" | IOSTANDARD = "LVCMOS18";
+NET "IO_L05_P_1"           LOC = "P70" | IOSTANDARD = "LVCMOS18";
+NET "IO_L05_N_1"           LOC = "P71" | IOSTANDARD = "LVCMOS18";
+NET "IO_L06_P_1"           LOC = "P72" | IOSTANDARD = "LVCMOS18";
+NET "IO_L06_N_1"           LOC = "P73" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 
 # Bank 2
 net "IO_L01_N_2"           LOC = "P25" | IOSTANDARD = "LVCMOS25";
@@ -54,5 +70,13 @@ net "IO_L06_N_3"           LOC = "P20" | IOSTANDARD = "LVCMOS18";
 NET "IO_0"                 TNM_NET = IO_0;
 TIMESPEC TS_IO_0 = PERIOD "IO_0" 40 ns HIGH 50%;
 
+# PLL Clock from IDT chip
 NET "IO_L02_N_0"           TNM_NET = IO_L02_N_0;
 TIMESPEC TS_IO_L02_N_0 = PERIOD "IO_L02_N_0" 7.5 ns HIGH 50%;
+
+# ADC Source clock
+NET "IO_L02_P_0"           TNM_NET = IO_L02_P_0;
+TIMESPEC TS_IO_L02_P_0 = PERIOD "IO_L02_P_0" 7.5 ns HIGH 50%;
+
+OFFSET = IN 1.3 ns VALID 2 ns BEFORE "IO_L02_N_0" RISING;
+OFFSET = IN 1.3 ns VALID 2 ns BEFORE "IO_L02_N_0" FALLING;
