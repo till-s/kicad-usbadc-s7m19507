@@ -457,26 +457,24 @@ begin
 
       P_SPI_CS_MUX : process ( subCmdBB, bbo, spi_miso, adcSD_i, pgaSDI ) is
       begin
-
          spi_csb <= '1';
          adcSCSb <= '1';
          pgaSCSb <= '1';
          adcSD_t <= '1';
 
-         case ( subCmdBB ) is
-            when CMD_BB_SPI_ROM_C  =>
+         if    ( subCmdBB = CMD_BB_SPI_ROM_C ) then
                spi_csb           <= bbo(BB_SPI_CSb_C);
                bbi(BB_SPI_MSI_C) <= spi_miso;
-            when CMD_BB_SPI_ADC_C  =>
+         elsif ( subCmdBB = CMD_BB_SPI_ADC_C ) then
                adcSCSb           <= bbo(BB_SPI_CSb_C);
                adcSD_t           <= bbo(BB_SPI_T_C  );
                bbi(BB_SPI_MSI_C) <= adcSD_i;
-            when CMD_BB_SPI_PGA_C  =>
+         elsif ( subCmdBB = CMD_BB_SPI_PGA_C ) then
                pgaSCSb           <= bbo(BB_SPI_CSb_C);
                bbi(BB_SPI_MSI_C) <= pgaSDI;
-            when others    =>
+         else
                bbi(BB_SPI_MSI_C) <= '0';
-         end case;
+         end if;
       end process P_SPI_CS_MUX;
 
       U_COMMAND_WRAPPER : entity work.CommandWrapper
