@@ -243,6 +243,8 @@ proc add_source_files {} {
    xfile add "hdl/usbadc/CommandWrapper.vhd"
    xfile add "hdl/usbadc/ByteStuffer.vhd"
    xfile add "hdl/usbadc/ByteDeStuffer.vhd"
+   xfile add "hdl/usbadc/ILAWrapper.vhd"
+   xfile add "hdl/usbadc/GitVersionPkg.vhd"
    xfile add "ipcore_dir/chipscope_icon.xco"
    xfile add "ipcore_dir/chipscope_ila.xco"
    puts ""

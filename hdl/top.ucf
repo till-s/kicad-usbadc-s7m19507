@@ -3,6 +3,9 @@
 NET "IO_L02_P_0"           LOC = "P83" | IOSTANDARD = "LVCMOS18";
 NET "IO_L02_N_0"           LOC = "P84" | IOSTANDARD = "LVCMOS18";
 NET "IO_0"                 LOC = "P90" | IOSTANDARD = "LVCMOS18";
+NET "IO_L03_N_0"           LOC = "P86" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
+NET "IO_L04_P_0"           LOC = "P88" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
+NET "IO_L04_N_0"           LOC = "P89" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 NET "IO_L05_P_0"           LOC = "P93" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 NET "IO_L05_N_0"           LOC = "P94" | IOSTANDARD = "LVCMOS18" | DRIVE="8";
 NET "IP_0"                 LOC = "P97" | IOSTANDARD = "LVCMOS18" | PULLUP="TRUE";
@@ -33,13 +36,13 @@ net "IO_L05_P_2"           LOC = "P32" | IOSTANDARD = "LVCMOS25";
 net "IO_L06_P_2"           LOC = "P33" | IOSTANDARD = "LVCMOS25";
 net "IO_L05_N_2"           LOC = "P34" | IOSTANDARD = "LVCMOS25";
 net "IO_L06_N_2"           LOC = "P35" | IOSTANDARD = "LVCMOS25";
-net "IO_L07_P_2"           LOC = "P36" | IOSTANDARD = "LVCMOS25";
-net "IO_L07_N_2"           LOC = "P37" | IOSTANDARD = "LVCMOS25";
+net "IO_L07_P_2"           LOC = "P36" | IOSTANDARD = "LVCMOS25" | DRIVE="8";
+net "IO_L07_N_2"           LOC = "P37" | IOSTANDARD = "LVCMOS25" | DRIVE="8";
 
 net "IO_L08_P_2"           LOC = "P40" | IOSTANDARD = "LVCMOS25";
 net "IO_L08_N_2"           LOC = "P41" | IOSTANDARD = "LVCMOS25";
 
-net "IO_L09_P_2"           LOC = "P43" | IOSTANDARD = "LVCMOS25";
+net "IO_L09_P_2"           LOC = "P43" | IOSTANDARD = "LVCMOS25" | DRIVE="8";
 net "IO_L09_N_2"           LOC = "P44" | IOSTANDARD = "LVCMOS25";
 
 net "IO_2"                 LOC = "P46" | IOSTANDARD = "LVCMOS25";
