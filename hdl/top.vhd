@@ -38,6 +38,7 @@ entity top is
       IO_L02_N_0   : in    std_logic;
       IP_0         : in    std_logic := 'H';
 
+      IO_L03_P_0   : inout std_logic := 'Z';
       IO_L03_N_0   : inout std_logic := 'Z';
       IO_L04_P_0   : inout std_logic := 'Z';
       IO_L04_N_0   : inout std_logic := 'Z';
@@ -110,6 +111,8 @@ architecture rtl of top is
    constant FIFO_VARIANT_C : FifoVariantType := BITBANG;
    constant GEN_ILA_C      : boolean         := false;
    constant GEN_ICAP_ILA_C : boolean         := false;
+   constant GEN_NO_ADCCLK_C: boolean         := false;
+   constant GEN_DUMMY_C    : boolean         := false;
 
    constant BB_INIT_C : std_logic_vector(7 downto 0) := x"F1";
 
@@ -147,7 +150,6 @@ architecture rtl of top is
    signal pllRst      : std_logic := '0';
 
    signal chnlAClk    : std_logic;
-   signal chnlBClk    : std_logic;
 
    signal sda_i       : std_logic;
    signal sda_t       : std_logic := '1';
@@ -159,17 +161,19 @@ architecture rtl of top is
    signal spi_mosi    : std_logic := '0';
    signal spi_miso    : std_logic;
 
-   signal adc_i       : std_logic_vector(7 downto 0);
-   signal adc_o       : std_logic_vector(7 downto 0);
-   signal adc_t       : std_logic_vector(7 downto 0) := (others => '0');
-   signal adcDor_i    : std_logic;
+   signal adc_i       : std_logic_vector(8 downto 0);
+   signal adc_o       : std_logic_vector(8 downto 0) := (others => '0');
+   signal adc_t       : std_logic_vector(8 downto 0) := (others => '1');
    signal adcDClk     : std_logic;
+   signal adcSync     : std_logic := '0';
    signal adcDRst     : std_logic := '0';
    signal adcSClk     : std_logic := '0';
    signal adcSD_i     : std_logic := '0';
    signal adcSD_o     : std_logic := '0';
    signal adcSD_t     : std_logic := '1';
    signal adcSCSb     : std_logic := '1';
+   signal adcDcmLckd  : std_logic := '0';
+
 
    signal pgaSClk     : std_logic := '0';
    signal pgaSDI      : std_logic := '0';
@@ -219,9 +223,31 @@ architecture rtl of top is
 
 begin
 
-   fifoClk    <= IO_0;
-   pllClk     <= IO_L02_N_0;
-   adcDClk    <= IO_L02_P_0;
+   U_FIFOCLK_BUF : component IBUFG
+      port map (
+         I => IO_0,
+         O => fifoClk
+      );
+ 
+   U_PLLCLK_BUF : component IBUFG
+      port map (
+         I => IO_L02_N_0,
+         O => pllClk
+      );
+ 
+   GEN_ADCCLK : if ( not GEN_NO_ADCCLK_C ) generate
+      U_ADCCLK_BUF : component IBUFG
+         port map (
+            I => IO_L02_P_0,
+            O => adcDClk
+         );
+   end generate GEN_ADCCLK;
+
+   GEN_NO_ADCCLK : if ( GEN_NO_ADCCLK_C ) generate
+      adcDClk <= pllClk;
+      adcDRst <= pllRst;
+   end generate GEN_NO_ADCCLK;
+
 
    -- FIFO
    U_FIFO_BUF : entity work.IOBufArray
@@ -278,61 +304,84 @@ begin
       end if;
    end process P_REG;
 
-   P_REGA : process ( chnlAClk ) is
+   P_REGA : process ( adcDClk ) is
    begin
-      if ( rising_edge( chnlAClk ) ) then
+      if ( rising_edge( adcDClk ) ) then
          pllCnt <= pllCnt + 1;
       end if;
    end process P_REGA;
 
    P_REGB : process ( chnlAClk ) is
    begin
-      if ( falling_edge( chnlAClk ) ) then
+      if ( rising_edge( chnlAClk ) ) then
          dumCnt <= dumCnt + 1;
       end if;
    end process P_REGB;
   
-   led(4 downto 2) <= fifoRDat(4 downto 2);
+   led(4)          <= adcDClk;
+   led(3)          <= adcDcmLckd;
+   led(2)          <= dumCnt(dumCnt'left);
    led(1)          <= pllCnt(pllCnt'left);
    led(0)          <= cnt(cnt'left);
 
    -- ADC
-   adcDor_i        <= IO_L04_P_1;
+   IO_L03_P_0      <= adcSync;
 
-   adc_i(0) <= IO_L05_P_1;
-   adc_i(1) <= IO_L04_N_1;
-   adc_i(2) <= IO_L03_N_1;
-   adc_i(3) <= IO_L03_P_1;
-   adc_i(4) <= IO_L02_N_1;
-   adc_i(5) <= IO_L02_P_1;
-   adc_i(6) <= IO_L01_N_1;
-   adc_i(7) <= IO_L01_P_1;
+   adc_i(0) <= IO_L04_P_1; -- DOR bit
+   adc_i(1) <= IO_L05_P_1;
+   adc_i(2) <= IO_L04_N_1;
+   adc_i(3) <= IO_L03_N_1;
+   adc_i(4) <= IO_L03_P_1;
+   adc_i(5) <= IO_L02_N_1;
+   adc_i(6) <= IO_L02_P_1;
+   adc_i(7) <= IO_L01_N_1;
+   adc_i(8) <= IO_L01_P_1;
 
-   IO_L05_P_1 <= adc_o(0);
-   IO_L04_N_1 <= adc_o(1);
-   IO_L03_N_1 <= adc_o(2);
-   IO_L03_P_1 <= adc_o(3);
-   IO_L02_N_1 <= adc_o(4);
-   IO_L02_P_1 <= adc_o(5);
-   IO_L01_N_1 <= adc_o(6);
-   IO_L01_P_1 <= adc_o(7);
+   GEN_DUMMY : if ( GEN_DUMMY_C ) generate
+      -- adc_t is abused as an intermediate signal here
+      -- IDDR/ODDR cannot use three-state buffers, apparently
 
-   GEN_ODDR : for i in 0 to 7 generate
-      U_BUF  : component OBUF
-         port map (
-            I => adc_t(i), O => adc_o(i)
-         );
-      U_ODDR : component ODDR2
-         port map (
-            Q   => adc_t(i),
-            C0  => chnlAClk,
-            C1  => not chnlAClk,
-            D0  => pllCnt(i),
-            D1  => dumCnt(i+1),
-            R   => '0',
-            S   => '0'
-         );
-   end generate GEN_ODDR;
+      IO_L04_P_1 <= adc_o(0); -- DOR bit
+      IO_L05_P_1 <= adc_o(1);
+      IO_L04_N_1 <= adc_o(2);
+      IO_L03_N_1 <= adc_o(3);
+      IO_L03_P_1 <= adc_o(4);
+      IO_L02_N_1 <= adc_o(5);
+      IO_L02_P_1 <= adc_o(6);
+      IO_L01_N_1 <= adc_o(7);
+      IO_L01_P_1 <= adc_o(8);
+
+      GEN_ODDR : for i in adc_o'range generate
+         U_OBUF : component OBUF
+            port map (
+               I   => adc_t(i),
+               O   => adc_o(i)
+            );
+         U_ODDR : component ODDR2
+            port map (
+               Q   => adc_t(i),
+               C0  => not chnlAClk,
+               C1  => chnlAClk,
+               D0  => pllCnt(i),
+               D1  => dumCnt(i+1),
+               R   => '0',
+               S   => '0'
+            );
+      end generate GEN_ODDR;
+   end generate GEN_DUMMY;
+
+   GEN_NO_DUMMY : if ( not GEN_DUMMY_C ) generate
+      IO_L04_P_1 <= 'Z'; -- DOR bit
+      IO_L05_P_1 <= 'Z';
+      IO_L04_N_1 <= 'Z';
+      IO_L03_N_1 <= 'Z';
+      IO_L03_P_1 <= 'Z';
+      IO_L02_N_1 <= 'Z';
+      IO_L02_P_1 <= 'Z';
+      IO_L01_N_1 <= 'Z';
+      IO_L01_P_1 <= 'Z';
+   end generate GEN_NO_DUMMY;
+
 
    IO_L03_N_0      <= adcSCSb;
    IO_L04_P_0      <= adcSClk;
@@ -433,14 +482,46 @@ begin
 
       signal   subCmdBB      : SubCommandBBType;
 
+      signal   spiIla0       : std_logic_vector(7 downto 0) := (others => '0');
+      signal   spiIla1       : std_logic_vector(7 downto 0) := (others => '0');
+      signal   spiIla2       : std_logic_vector(7 downto 0) := (others => '0');
+      signal   spiIla3       : std_logic_vector(7 downto 0) := (others => '0');
+
    begin
 
+      spiIla0(2 downto 0) <= subCmdBB; 
+      spiIla0(3         ) <= '0';
+      spiIla0(4         ) <= pgaSCSb;
+      spiIla0(5         ) <= pgaSClk;
+      spiIla0(6         ) <= pgaSDO;
+      spiIla0(7         ) <= pgaSDI;
+
+      spiIla1(2 downto 0) <= (others => '0');
+      spiIla1(3         ) <= adcSD_t;
+      spiIla1(4         ) <= adcSCSb;
+      spiIla1(5         ) <= adcSClk;
+      spiIla1(6         ) <= adcSD_o;
+      spiIla1(7         ) <= adcSD_i;
+
+      GEN_ILA : if ( false ) generate
+      U_ILA : entity work.ILAWrapper
+         port map(
+            clk   => fifoClk,
+            trg0  => spiIla0,
+            trg1  => spiIla1,
+            trg2  => spiIla2,
+            trg3  => spiIla3
+         );
+      end generate GEN_ILA;
+ 
       spi_sck           <= bbo(BB_SPI_SCK_C);
       spi_mosi          <= bbo(BB_SPI_MSO_C);
 
       adcSClk           <= bbo(BB_SPI_SCK_C);
       adcSD_o           <= bbo(BB_SPI_MSO_C);
 
+      pgaSClk           <= bbo(BB_SPI_SCK_C);
+      pgaSDO            <= bbo(BB_SPI_MSO_C);
 
       sda_t             <= bbo(BB_I2C_SDA_C);
       scl_t             <= bbo(BB_I2C_SCL_C);
@@ -477,6 +558,24 @@ begin
          end if;
       end process P_SPI_CS_MUX;
 
+      GEN_ADC_ILA : if ( false ) generate
+         signal adcTrg0 : std_logic_vector(7 downto 0) := (others => '0');
+         signal adcTrg1 : std_logic_vector(7 downto 0) := (others => '0');
+         signal adcTrg2 : std_logic_vector(7 downto 0) := (others => '0');
+         signal adcTrg3 : std_logic_vector(7 downto 0) := (others => '0');
+      begin
+         adcTrg0 <= adc_i(8 downto 1);
+         adcTrg1 <= ( 0 => adc_i(0), others => '0');
+         U_ADC_ILA : entity work.ILAWrapper
+            port map (
+               clk  => adcDClk,
+               trg0 => adcTrg0,
+               trg1 => adcTrg1,
+               trg2 => adcTrg2,
+               trg3 => adcTrg3
+            );
+      end generate GEN_ADC_ILA;
+
       U_COMMAND_WRAPPER : entity work.CommandWrapper
          generic map (
             I2C_SCL_G    => BB_I2C_SCL_C,
@@ -501,12 +600,12 @@ begin
             bbi          => bbi,
             subCmdBB     => subCmdBB,
 
-            adcClk       => pllClk,
-            adcRst       => pllRst,
+            adcClk       => adcDClk,
+            adcRst       => adcDRst,
 
             adcDataDDR   => adc_i,
-            chnlAClk     => chnlAClk,
-            chnlBClk     => chnlBClk
+            smplClk      => chnlAClk,
+            adcDcmLocked => adcDcmLckd
          );
 
    end generate GEN_BITBANG;
