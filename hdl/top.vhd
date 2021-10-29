@@ -102,7 +102,7 @@ end top;
 
 architecture rtl of top is
    
-   constant NUM_LED_C         : natural := 5;
+   constant NUM_LED_C         : natural := 7;
 
    constant FIFO_CLOCK_FREQ_C : real := 24.0E6;
 
@@ -274,6 +274,8 @@ begin
    fifoTXFull  <= IP_3;
    fifoRXEmpty <= IO_L06_P_3;
 
+   IO_L12_P_2 <= led(6); -- front LED, green
+   IO_L01_N_2 <= led(5); -- front LED, red
    IO_L08_N_2 <= led(4);
    IO_L08_P_2 <= led(3);
    IO_L10_N_2 <= led(2);
@@ -318,6 +320,8 @@ begin
       end if;
    end process P_REGB;
   
+   led(6)          <= not led(1);
+   led(5)          <= led(1);
    led(4)          <= adcDClk;
    led(3)          <= adcDcmLckd;
    led(2)          <= dumCnt(dumCnt'left);
