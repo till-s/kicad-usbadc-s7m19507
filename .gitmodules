@@ -1,0 +1,3 @@
+[submodule "hdl/usbadc-support"]
+	path = hdl/usbadc-support
+	url = ../usbadc-support

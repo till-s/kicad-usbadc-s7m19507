@@ -159,6 +159,7 @@ proc show_help {} {
    puts ""
    puts "options:"
    puts "   run_process       - set properties and run processes."
+   puts "   recreate_project  - recreate the project from scratch (without building)."
    puts "   rebuild_project   - rebuild the project from scratch and run processes."
    puts "   set_project_props - set project properties (device, speed, etc.)"
    puts "   add_source_files  - add source files"
@@ -201,7 +202,7 @@ proc set_project_props {} {
    puts "$myScript: Setting project properties..."
 
    project set family "Spartan3A and Spartan3AN"
-   project set device "xc3s50a"
+   project set device "xc3s200a"
    project set package "vq100"
    project set speed "-4"
    project set top_level_module_type "HDL"
@@ -210,6 +211,12 @@ proc set_project_props {} {
    project set "Preferred Language" "VHDL"
    project set "Enable Message Filtering" "false"
 
+}
+
+#
+# Create git-version package
+proc update_git_version {} {
+	exec make -C hdl -f usbadc-support/hdl/makefile git
 }
 
 
@@ -229,25 +236,27 @@ proc add_source_files {} {
 
    puts "$myScript: Adding sources to project..."
 
+   update_git_version
+
    xfile add "hdl/IOBufArray.vhd"
    xfile add "hdl/top.ucf"
    xfile add "hdl/top.vhd"
-   xfile add "hdl/usbadc/BitBangIF.vhd"
-   xfile add "hdl/usbadc/Ft240Fifo.vhd"
-   xfile add "hdl/usbadc/MaxAdc.vhd"
-   xfile add "hdl/usbadc/SynchronizerBit.vhd"
-   xfile add "hdl/usbadc/CommandMuxPkg.vhd"
-   xfile add "hdl/usbadc/CommandMux.vhd"
-   xfile add "hdl/usbadc/BitBangIF.vhd"
-   xfile add "hdl/usbadc/CommandBitBang.vhd"
-   xfile add "hdl/usbadc/CommandWrapper.vhd"
-   xfile add "hdl/usbadc/ByteStuffer.vhd"
-   xfile add "hdl/usbadc/ByteDeStuffer.vhd"
-   xfile add "hdl/usbadc/ILAWrapper.vhd"
-   xfile add "hdl/usbadc/ILAWrapperPkg.vhd"
-   xfile add "hdl/usbadc/GitVersionPkg.vhd"
+   xfile add "hdl/usbadc-support/hdl/BitBangIF.vhd"
+   xfile add "hdl/usbadc-support/hdl/Ft240Fifo.vhd"
+   xfile add "hdl/usbadc-support/hdl/MaxAdc.vhd"
+   xfile add "hdl/usbadc-support/hdl/SynchronizerBit.vhd"
+   xfile add "hdl/usbadc-support/hdl/CommandMuxPkg.vhd"
+   xfile add "hdl/usbadc-support/hdl/CommandMux.vhd"
+   xfile add "hdl/usbadc-support/hdl/BitBangIF.vhd"
+   xfile add "hdl/usbadc-support/hdl/CommandBitBang.vhd"
+   xfile add "hdl/usbadc-support/hdl/CommandWrapper.vhd"
+   xfile add "hdl/usbadc-support/hdl/ByteStuffer.vhd"
+   xfile add "hdl/usbadc-support/hdl/ByteDeStuffer.vhd"
+   xfile add "hdl/usbadc-support/hdl/ILAWrapper.vhd"
+   xfile add "hdl/usbadc-support/hdl/ILAWrapperPkg.vhd"
+   xfile add "hdl/GitVersionPkg.vhd"
    xfile add "ipcore_dir/chipscope_icon.xco"
-   xfile add "ipcore_dir/chipscope_ila.xco"
+   xfile add "ipcore_dir/ila_1br.xco"
    puts ""
    puts "WARNING: project contains IP cores, synthesis will fail if any of the cores require regenerating."
    puts ""
@@ -507,6 +516,7 @@ proc main {} {
       switch $option {
          "show_help"           { show_help }
          "run_process"         { run_process }
+         "recreate_project"    { recreate_project }
          "rebuild_project"     { rebuild_project }
          "set_project_props"   { set_project_props }
          "add_source_files"    { add_source_files }
