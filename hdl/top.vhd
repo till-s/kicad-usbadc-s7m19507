@@ -507,6 +507,12 @@ begin
       spiIla1(6         ) <= adcSD_o;
       spiIla1(7         ) <= adcSD_i;
 
+      spiIla2(         0) <= spi_sck;
+      spiIla2(         1) <= spi_mosi;
+      spiIla2(         2) <= spi_miso;
+      spiIla2(         3) <= spi_csb;
+      spiIla2(7 downto 4) <= (others => '0');
+
       GEN_ILA : if ( false ) generate
       U_ILA : entity work.ILAWrapper
          port map(
