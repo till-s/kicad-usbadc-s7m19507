@@ -583,6 +583,9 @@ begin
       U_COMMAND_WRAPPER : entity work.CommandWrapper
          generic map (
             I2C_SCL_G    => BB_I2C_SCL_C,
+            SPI_SCLK_G   => BB_SPI_SCK_C,
+            SPI_MOSI_G   => BB_SPI_MSO_C,
+            SPI_MISO_G   => BB_SPI_MSI_C,
             BBO_INIT_G   => BB_INIT_C,
             -- can't infer 3*1024, unfortunately; would have to hand code...
             MEM_DEPTH_G  => (2*1024),

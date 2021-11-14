@@ -254,6 +254,7 @@ proc add_source_files {} {
    xfile add "hdl/usbadc-support/hdl/ByteDeStuffer.vhd"
    xfile add "hdl/usbadc-support/hdl/ILAWrapper.vhd"
    xfile add "hdl/usbadc-support/hdl/ILAWrapperPkg.vhd"
+   xfile add "hdl/usbadc-support/hdl/WordSpiIF.vhd"
    xfile add "hdl/GitVersionPkg.vhd"
    xfile add "ipcore_dir/chipscope_icon.xco"
    xfile add "ipcore_dir/ila_1br.xco"
