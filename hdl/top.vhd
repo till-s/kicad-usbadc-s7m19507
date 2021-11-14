@@ -553,7 +553,7 @@ begin
          pgaSCSb <= '1';
          adcSD_t <= '1';
 
-         if    ( subCmdBB = CMD_BB_SPI_ROM_C ) then
+         if    ( subCmdBB = CMD_BB_SPI_ROM_C or (subCmdBB = CMD_BB_TEST_C) ) then
                spi_csb           <= bbo(BB_SPI_CSb_C);
                bbi(BB_SPI_MSI_C) <= spi_miso;
          elsif ( subCmdBB = CMD_BB_SPI_ADC_C ) then
