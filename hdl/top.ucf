@@ -79,8 +79,14 @@ NET "IO_L02_N_0"           TNM_NET = IO_L02_N_0;
 TIMESPEC TS_IO_L02_N_0 = PERIOD "IO_L02_N_0" 7.5 ns HIGH 50%;
 
 # ADC Source clock
-NET "IO_L02_P_0"           TNM_NET = IO_L02_P_0;
-TIMESPEC TS_IO_L02_P_0 = PERIOD "IO_L02_P_0" 7.5 ns HIGH 50%;
+NET "IO_L02_P_0"           TNM_NET = TG_adcClk;
+TIMESPEC TS_adcClk = PERIOD "TG_adcClk" 7.5 ns HIGH 50%;
+
+# Multicycle relaxation for 2nd stage CIC
+NET "*cenCic1" TNM_NET = TG_cenCic1;
+TIMESPEC TS_cenCic1_to_cenCic1 = FROM "TG_cenCic1" TO "TG_cenCic1" TS_adcClk * 2;
+TIMESPEC TS_adcClk_to_cenCic1  = FROM "TG_adcClk"  TO "TG_cenCic1" TS_adcClk * 2;
+
 
 OFFSET = IN 1.3 ns VALID 2 ns BEFORE "IO_L02_N_0" RISING;
 OFFSET = IN 1.3 ns VALID 2 ns BEFORE "IO_L02_N_0" FALLING;
