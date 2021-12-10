@@ -591,7 +591,7 @@ begin
             I2C_SCL_G    => BB_I2C_SCL_C,
             BBO_INIT_G   => BB_INIT_C,
             -- can't infer 3*1024, unfortunately; would have to hand code...
-            MEM_DEPTH_G  => (8*1024),
+            MEM_DEPTH_G  => (16*1024),
             FIFO_FREQ_G  => FIFO_CLOCK_FREQ_C
          )
          port map (
