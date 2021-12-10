@@ -30,7 +30,8 @@ use work.CommandMuxPkg.all;
 
 entity top is
    generic (
-      GEN_ICAP_G   : boolean         := false
+      GEN_ICAP_G   : boolean         := false;
+      DEVICE_G     : string          := "xc3s200a"
    );
    port (
       IO_0         : in    std_logic;
@@ -101,7 +102,22 @@ entity top is
 end top;
 
 architecture rtl of top is
-   
+
+   function MEM_DEPTH_F return natural is
+   begin
+      if    ( DEVICE_G = "xc3s200a" ) then
+         return (16*1024);
+      else
+         -- can't infer 3*1024, unfortunately; would have to hand code...
+         return ( 2*1024);
+      end if;
+   end function MEMP_DEPTH_F;
+
+   function DISABLE_DECIMATORS_F return natural is
+   begin
+      return ( DEVICE_G /= "xc3s200a" );
+   end function DISABLE_DECIMATORS_F;
+
    constant NUM_LED_C         : natural := 7;
 
    constant FIFO_CLOCK_FREQ_C : real := 24.0E6;
@@ -588,34 +604,34 @@ begin
 
       U_COMMAND_WRAPPER : entity work.CommandWrapper
          generic map (
-            I2C_SCL_G    => BB_I2C_SCL_C,
-            BBO_INIT_G   => BB_INIT_C,
-            -- can't infer 3*1024, unfortunately; would have to hand code...
-            MEM_DEPTH_G  => (16*1024),
-            FIFO_FREQ_G  => FIFO_CLOCK_FREQ_C
+            I2C_SCL_G            => BB_I2C_SCL_C,
+            BBO_INIT_G           => BB_INIT_C,
+            MEM_DEPTH_G          => MEM_DEPTH_F,
+            FIFO_FREQ_G          => FIFO_CLOCK_FREQ_C,
+            DISABLE_DECIMATORS_G => DISABLE_DECIMATORS_F
          )
          port map (
-            clk          => fifoClk, 
-            rst          => fifoRst, 
+            clk                  => fifoClk, 
+            rst                  => fifoRst, 
             
-            datIb        => fifoRDat,
-            vldIb        => fifoRVld,
-            rdyIb        => fifoRRdy,
+            datIb                => fifoRDat,
+            vldIb                => fifoRVld,
+            rdyIb                => fifoRRdy,
 
-            datOb        => fifoWDat,
-            vldOb        => fifoWVld,
-            rdyOb        => fifoWRdy,
+            datOb                => fifoWDat,
+            vldOb                => fifoWVld,
+            rdyOb                => fifoWRdy,
 
-            bbo          => bbo,
-            bbi          => bbi,
-            subCmdBB     => subCmdBB,
+            bbo                  => bbo,
+            bbi                  => bbi,
+            subCmdBB             => subCmdBB,
 
-            adcClk       => adcDClk,
-            adcRst       => adcDRst,
+            adcClk               => adcDClk,
+            adcRst               => adcDRst,
 
-            adcDataDDR   => adc_i,
-            smplClk      => chnlAClk,
-            adcDcmLocked => adcDcmLckd
+            adcDataDDR           => adc_i,
+            smplClk              => chnlAClk,
+            adcDcmLocked         => adcDcmLckd
          );
 
    end generate GEN_BITBANG;
