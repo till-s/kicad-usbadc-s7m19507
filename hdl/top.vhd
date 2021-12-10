@@ -111,9 +111,9 @@ architecture rtl of top is
          -- can't infer 3*1024, unfortunately; would have to hand code...
          return ( 2*1024);
       end if;
-   end function MEMP_DEPTH_F;
+   end function MEM_DEPTH_F;
 
-   function DISABLE_DECIMATORS_F return natural is
+   function DISABLE_DECIMATORS_F return boolean is
    begin
       return ( DEVICE_G /= "xc3s200a" );
    end function DISABLE_DECIMATORS_F;
