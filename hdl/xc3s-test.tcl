@@ -112,6 +112,7 @@ proc recreate_project {} {
    set_project_props
    add_source_files
    create_libraries
+   set_process_props
    puts "$myScript: project rebuild completed."
 }
 
