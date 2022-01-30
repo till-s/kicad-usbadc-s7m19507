@@ -102,17 +102,26 @@ end top;
 
 architecture rtl of top is
 
-   -- A23..A16; use multiboot if nonzero
    -- keep this here as a constant so it
    -- is recorded in git.
-   -- xc3s200a uses < 0x30000 bytes for configuration
-   constant MB_ADDR_C      : std_logic_vector(7 downto 0) := x"00";
-   constant GEN_ICAP_C     : boolean         := (MB_ADDR_C /= x"00");
+   constant GEN_ICAP_C     : boolean         := true;
 
    constant GEN_ILA_C      : boolean         := false;
    constant GEN_ICAP_ILA_C : boolean         := true;
    constant GEN_NO_ADCCLK_C: boolean         := false;
    constant GEN_DUMMY_C    : boolean         := false;
+
+   function MB_ADDR_F   return std_logic_vector is
+     variable v : std_logic_vector(7 downto 0);
+   begin
+      -- xc3s200a uses < 0x30000 bytes for configuration
+      if ( GEN_ICAP_C ) then
+         v := x"03";
+      else
+         v := x"00";
+      end if;
+      return v;
+   constant MB_ADDR_F;
 
    function MEM_DEPTH_F return natural is
    begin
@@ -679,7 +688,7 @@ begin
          (RWb => '0', data => "00110010"), -- Write GENERAL2 (hi)
          (RWb => '0', data => "10000001"), --        (lo)
          (RWb => '0', data => x"00"), --  SPI CMD   (hi) (0x00 seems to indicate 'last command')
-         (RWb => '0', data => MB_ADDR_C ), --  A23..16   (lo)
+         (RWb => '0', data => MB_ADDR_F ), --  A23..16   (lo)
          (RWb => '0', data => x"30"), -- CMD        (hi)
          (RWb => '0', data => x"A1"), --            (lo)
          (RWb => '0', data => x"00"), -- REBOOT     (hi)
