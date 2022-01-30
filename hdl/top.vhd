@@ -30,7 +30,7 @@ use work.CommandMuxPkg.all;
 
 entity top is
    generic (
-      GEN_ICAP_G   : boolean         := false;
+      GEN_ICAP_G   : integer         := 0;
       DEVICE_G     : string          := "xc3s200a"
    );
    port (
@@ -103,13 +103,22 @@ end top;
 
 architecture rtl of top is
 
+   constant GEN_ILA_C      : boolean         := false;
+   constant GEN_ICAP_ILA_C : boolean         := true;
+   constant GEN_NO_ADCCLK_C: boolean         := false;
+   constant GEN_DUMMY_C    : boolean         := false;
+
    function MEM_DEPTH_F return natural is
    begin
       if    ( DEVICE_G = "xc3s200a" ) then
          return (16*1024);
       else
-         -- can't infer 3*1024, unfortunately; would have to hand code...
-         return ( 2*1024);
+         if ( GEN_ICAP_ILA_C ) then
+            return ( 1*1024);
+         else
+            -- can't infer 3*1024, unfortunately; would have to hand code...
+            return ( 2*1024);
+         end if;
       end if;
    end function MEM_DEPTH_F;
 
@@ -125,11 +134,6 @@ architecture rtl of top is
    type FifoVariantType is ( LOOPBACK, BITBANG );
 
    constant FIFO_VARIANT_C : FifoVariantType := BITBANG;
-   constant GEN_ILA_C      : boolean         := false;
-   constant GEN_ICAP_ILA_C : boolean         := false;
-   constant GEN_NO_ADCCLK_C: boolean         := false;
-   constant GEN_DUMMY_C    : boolean         := false;
-
    constant BB_INIT_C : std_logic_vector(7 downto 0) := x"F1";
 
    signal led         : std_logic_vector(NUM_LED_C - 1 downto 0) := (others => '1');
@@ -337,8 +341,8 @@ begin
    end process P_REGB;
   
    led(6)          <= not led(1);
-   led(5)          <= led(1);
-   led(4)          <= adcDClk;
+   led(5)          <= not cnt(cnt'left) when GEN_ICAP_G /= 0 else '0';
+   led(4)          <= '1'               when GEN_ICAP_G /= 0 else '0';
    led(3)          <= adcDcmLckd;
    led(2)          <= dumCnt(dumCnt'left);
    led(1)          <= pllCnt(pllCnt'left);
@@ -637,96 +641,167 @@ begin
    end generate GEN_BITBANG;
 
 
-   GEN_ICAP : if ( GEN_ICAP_G ) generate
+   GEN_ICAP : if ( GEN_ICAP_G /= 0 ) generate
 
       subtype  IcapSlv      is std_logic_vector(7 downto 0);
-      type     IcapSlvArray is array (natural range <>) of IcapSlv;
+
+      type IcapPrgItemType  is record
+         data                : IcapSlv;
+         RWb                 : std_logic;
+      end record IcapPrgItemType;
+
+      type     IcapPrgArray is array (natural range <>) of IcapPrgItemType;
 
 	  constant ICAP_WAIT_C   : integer := 4;
 
-      constant ICAP_PROG_C   : IcapSlvArray (12 downto 1) := (
+      -- reading back GENERAL2 does not work when an image is loaded from jtag
+      -- we always read back 0b00 (spi cmd + 0x00 address byte).
+      -- It does seem to work when configuring from flash -- but it is no use
+      -- to try to determine if this was a multiboot because the bitstream
+      -- writes GENERAL1/2 every time (even if we tell bitgen not to embed the
+      -- next address -- it will then simply be 0x00000000).
+      constant ICAP_PROG_MB_C: IcapPrgArray (12 downto 1) := (
          -- UG332
-         x"FF", -- Dummy      (hi)
-         x"FF", --            (lo)
-         x"AA", -- SYNC       (hi)
-         x"99", --            (lo)
-         x"30", -- CMD        (hi)
-         x"A1", --            (lo)
-         x"00", -- REBOOT     (hi)
-         x"0E", --            (lo)
-         x"20", -- NOOP       (hi)
-         x"00", --            (lo)
-         x"20", -- NOOP       (hi)
-         x"00"  --            (lo)
+         (RWb => '0', data => x"FF"), -- Dummy      (hi)
+         (RWb => '0', data => x"FF"), --            (lo)
+         (RWb => '0', data => x"AA"), -- SYNC       (hi)
+         (RWb => '0', data => x"99"), --            (lo)
+--       (RWb => '0', data => "00110010"), -- Write GENERAL1 (hi)
+--       (RWb => '0', data => "01100001"), --        (lo)
+--       (RWb => '0', data => x"00"), --  A16..A8   (hi)
+--       (RWb => '0', data => x"00"), --  A07..A0   (lo)
+--       (RWb => '0', data => "00110010"), -- Write GENERAL2 (hi)
+--       (RWb => '0', data => "10000001"), --        (lo)
+--       (RWb => '0', data => x"0b"), --  SPI CMD   (hi)
+--       (RWb => '0', data => x"01"), --  A23..16   (lo)
+         (RWb => '0', data => x"30"), -- CMD        (hi)
+         (RWb => '0', data => x"A1"), --            (lo)
+         (RWb => '0', data => x"00"), -- REBOOT     (hi)
+         (RWb => '0', data => x"0E"), --            (lo)
+--       (RWb => '0', data => "00101010"), -- Read GENERAL2 (hi)
+--       (RWb => '0', data => "10000001"), --        (lo)
+--       (RWb => '0', data => x"20"), -- NOOP       (hi) -- flush 'pipeline' with 2 no-ops
+--       (RWb => '0', data => x"00"), --            (lo)
+--       (RWb => '0', data => x"20"), -- NOOP       (hi)
+--       (RWb => '0', data => x"00"), --            (lo)
+--       (RWb => '1', data => x"FF"), --            (xx) -- readout after 3 clocks
+--       (RWb => '1', data => x"FF"), --            (xx)
+--       (RWb => '1', data => x"FF"), --            (hi)
+--       (RWb => '1', data => x"FF"), --            (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00"), --            (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00")  --            (lo)
       );
+
+      constant ICAP_PROG_RD_C: IcapPrgArray (18 downto 1) := (
+         -- UG332
+         (RWb => '0', data => x"FF"), -- Dummy      (hi)
+         (RWb => '0', data => x"FF"), --            (lo)
+         (RWb => '0', data => x"AA"), -- SYNC       (hi)
+         (RWb => '0', data => x"99"), --            (lo)
+         (RWb => '0', data => "00101010"), -- Read GENERAL2 (hi)
+         (RWb => '0', data => "10000001"), --        (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00"), --            (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00"), --            (lo)
+         (RWb => '1', data => x"FF"), --            (hi)
+         (RWb => '1', data => x"FF"), --            (lo)
+         (RWb => '1', data => x"FF"), --            (lo)
+         (RWb => '1', data => x"FF"), --            (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00"), --            (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00") --            (lo)
+      );
+
+      constant ICAP_PROG_C     : IcapPrgArray := ICAP_PROG_MB_C;
 
       constant ICAP_IDX_INIT_C : integer := ICAP_WAIT_C + ICAP_PROG_C'left;
 
       subtype  IcapIdxType  is integer range ICAP_IDX_INIT_C downto 0;
 
+      type   IcapRegType    is record
+         idx                 : IcapIdxType;
+         RWb                 : std_logic;
+         jmp                 : std_logic;
+      end record IcapRegType;
+
+      constant ICAP_REG_INIT_C : IcapRegType                := (
+         idx                 => ICAP_IDX_INIT_C,
+         RWb                 => '0',
+         jmp                 => '0'
+      );
+
       signal icapCEb         : std_ulogic                   := '0';
       signal icapDin         : std_logic_vector(7 downto 0) := (others => '1');
       signal icapDou         : std_logic_vector(7 downto 0);
-      signal icapWRb         : std_ulogic                   := '0';
+      signal icapRWb         : std_ulogic                   := '0';
       signal icapBSY         : std_ulogic;
 
-      signal icapIdx         : IcapIdxType := ICAP_IDX_INIT_C;
+      signal icapReg         : IcapRegType := ICAP_REG_INIT_C;
+      signal icapRin         : IcapRegType;
 
       signal icapIla0        : std_logic_vector(7 downto 0);
       signal icapIla1        : std_logic_vector(7 downto 0);
       signal icapIla2        : std_logic_vector(7 downto 0);
       signal icapIla3        : std_logic_vector(7 downto 0);
 
-      signal J12BLoc         : std_logic;
+      signal J12BLoc         : std_logic := '0';
 
    begin
 
-      P_ICAP_COMB : process( icapIdx ) is
-      begin
-         if ( icapIdx >= ICAP_PROG_C'low  and icapIdx <= ICAP_PROG_C'high ) then
-            icapDin <= ICAP_PROG_C(icapIdx)(7 downto 0);
-            icapWRb <= '0';
-            icapCEb <= '0';
-         else
-            icapDin <= x"FF";
-            icapWRb <= '0';
-            icapCEb <= '1';
-         end if;
-      end process P_ICAP_COMB;
+      icapRWb <= icapReg.RWb;
+      J12BLoc <= icapReg.jmp;
 
+      P_ICAP_COMB : process( icapReg, J12B ) is
+         variable v : IcapRegType;
+      begin
+         v       := icapReg;
+         icapDin <= x"FF";
+         icapCEb <= '1';
+         if ( icapReg.idx > 0 ) then
+            v.idx   := icapReg.idx - 1;
+         end if;
+         if ( icapReg.idx >= ICAP_PROG_C'low  and icapReg.idx <= ICAP_PROG_C'high ) then
+            if ( (multiBoot or J12B) = '1' ) then
+               v.jmp := '1';
+            end if;
+            if ( v.jmp = '1' ) then
+               icapDin <= ICAP_PROG_C(icapReg.idx).data(7 downto 0);
+               icapCEb <= '0';
+               if ( icapReg.RWb /= ICAP_PROG_C(icapReg.idx).RWb ) then
+                  icapCEb <= '1';
+                  v.idx := icapReg.idx;
+                  v.RWb := not v.RWb;
+               end if;
+            else
+               v.idx := icapReg.idx;
+            end if;
+         end if;
+         icapRin <= v;
+      end process P_ICAP_COMB;
 
       P_ICAP : process ( fifoClk ) is
       begin
          if ( rising_edge( fifoClk ) ) then
             if ( fifoRst = '1' ) then
-               icapIdx <= ICAP_IDX_INIT_C;
+               icapReg <= ICAP_REG_INIT_C;
             else
-               if ( ( multiBoot or J12BLoc ) = '1' ) then
-                  if ( icapIdx > 0 ) then
-                     icapIdx <= icapIdx - 1;
-                  end if;
-               end if;
+               icapReg <= icapRin;
             end if;
          end if;
       end process P_ICAP;
 
       icapIla0 <= icapDin;
       icapIla1 <= icapDou;
-      icapIla2 <= ( 0 => icapCEb, 1 => icapWRb, 2 => J12B, 7 => icapBSY, others => '0' );
-      icapIla3 <= std_logic_vector( to_unsigned( icapIdx, 8 ) );
+      icapIla2 <= ( 0 => icapCEb, 1 => icapRWb, 2 => J12B, 3 => J12BLoc, 4 => '1', 7 => icapBSY, others => '0' );
+      icapIla3 <= std_logic_vector( to_unsigned( icapReg.idx, 8 ) );
 
       GEN_ICAP_ILA : if ( GEN_ICAP_ILA_C ) generate
 
-         P_JMP_HOLD : process ( fifoClk ) is
-         begin
-            if ( rising_edge( fifoClk ) ) then
-               if ( J12B = '1' ) then
-                  J12BLoc <= '1';
-               end if;
-            end if;
-         end process P_JMP_HOLD;
-
-         U_ILA : entity work.ILAWrapper
+         U_ICAP_ILA : entity work.ILAWrapper
             port map(
                clk   => fifoClk,
                trg0  => icapIla0,
@@ -736,10 +811,6 @@ begin
             );
 
       end generate GEN_ICAP_ILA;
-
-      GEN_NO_ICAP_ILA : if ( not GEN_ICAP_ILA_C ) generate
-         J12BLoc <= J12B;
-      end generate GEN_NO_ICAP_ILA;
 
       U_ICAP : component ICAP_SPARTAN3A
          port map (
@@ -762,7 +833,7 @@ begin
             O(5)  => icapDou(2), -- : in  std_logic_vector(7 downto 0);
             O(6)  => icapDou(1), -- : in  std_logic_vector(7 downto 0);
             O(7)  => icapDou(0), -- : in  std_logic_vector(7 downto 0);
-            WRITE => icapWRb     -- : in  std_ulogic
+            WRITE => icapRWb     -- : in  std_ulogic
          );
    end generate GEN_ICAP;
 
