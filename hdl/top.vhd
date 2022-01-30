@@ -106,7 +106,7 @@ architecture rtl of top is
    -- keep this here as a constant so it
    -- is recorded in git.
    -- xc3s200a uses < 0x30000 bytes for configuration
-   constant MB_ADDR_C      : std_logic_vector(7 downto 0) := x"03";
+   constant MB_ADDR_C      : std_logic_vector(7 downto 0) := x"00";
    constant GEN_ICAP_C     : boolean         := (MB_ADDR_C /= x"00");
 
    constant GEN_ILA_C      : boolean         := false;
