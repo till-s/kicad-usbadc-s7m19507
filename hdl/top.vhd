@@ -121,7 +121,7 @@ architecture rtl of top is
          v := x"00";
       end if;
       return v;
-   constant MB_ADDR_F;
+   end function MB_ADDR_F;
 
    function MEM_DEPTH_F return natural is
    begin
