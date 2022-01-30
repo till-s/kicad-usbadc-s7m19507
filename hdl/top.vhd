@@ -30,7 +30,6 @@ use work.CommandMuxPkg.all;
 
 entity top is
    generic (
-      GEN_ICAP_G   : integer         := 0;
       DEVICE_G     : string          := "xc3s200a"
    );
    port (
@@ -102,6 +101,13 @@ entity top is
 end top;
 
 architecture rtl of top is
+
+   -- A23..A16; use multiboot if nonzero
+   -- keep this here as a constant so it
+   -- is recorded in git.
+   -- xc3s200a uses < 0x30000 bytes for configuration
+   constant MB_ADDR_C      : std_logic_vector(7 downto 0) := x"03";
+   constant GEN_ICAP_C     : boolean         := (MB_ADDR_C /= x"00");
 
    constant GEN_ILA_C      : boolean         := false;
    constant GEN_ICAP_ILA_C : boolean         := true;
@@ -341,8 +347,8 @@ begin
    end process P_REGB;
   
    led(6)          <= not led(1);
-   led(5)          <= not cnt(cnt'left) when GEN_ICAP_G /= 0 else '0';
-   led(4)          <= '1'               when GEN_ICAP_G /= 0 else '0';
+   led(5)          <= not cnt(cnt'left) when GEN_ICAP_C else '0';
+   led(4)          <= '1'               when GEN_ICAP_C else '0';
    led(3)          <= adcDcmLckd;
    led(2)          <= dumCnt(dumCnt'left);
    led(1)          <= pllCnt(pllCnt'left);
@@ -641,7 +647,7 @@ begin
    end generate GEN_BITBANG;
 
 
-   GEN_ICAP : if ( GEN_ICAP_G /= 0 ) generate
+   GEN_ICAP : if ( GEN_ICAP_C ) generate
 
       subtype  IcapSlv      is std_logic_vector(7 downto 0);
 
@@ -660,7 +666,7 @@ begin
       -- to try to determine if this was a multiboot because the bitstream
       -- writes GENERAL1/2 every time (even if we tell bitgen not to embed the
       -- next address -- it will then simply be 0x00000000).
-      constant ICAP_PROG_MB_C: IcapPrgArray (12 downto 1) := (
+      constant ICAP_PROG_MB_C: IcapPrgArray (16 downto 1) := (
          -- UG332
          (RWb => '0', data => x"FF"), -- Dummy      (hi)
          (RWb => '0', data => x"FF"), --            (lo)
@@ -670,10 +676,10 @@ begin
 --       (RWb => '0', data => "01100001"), --        (lo)
 --       (RWb => '0', data => x"00"), --  A16..A8   (hi)
 --       (RWb => '0', data => x"00"), --  A07..A0   (lo)
---       (RWb => '0', data => "00110010"), -- Write GENERAL2 (hi)
---       (RWb => '0', data => "10000001"), --        (lo)
---       (RWb => '0', data => x"0b"), --  SPI CMD   (hi)
---       (RWb => '0', data => x"01"), --  A23..16   (lo)
+         (RWb => '0', data => "00110010"), -- Write GENERAL2 (hi)
+         (RWb => '0', data => "10000001"), --        (lo)
+         (RWb => '0', data => x"00"), --  SPI CMD   (hi) (0x00 seems to indicate 'last command')
+         (RWb => '0', data => MB_ADDR_C ), --  A23..16   (lo)
          (RWb => '0', data => x"30"), -- CMD        (hi)
          (RWb => '0', data => x"A1"), --            (lo)
          (RWb => '0', data => x"00"), -- REBOOT     (hi)
