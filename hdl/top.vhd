@@ -107,7 +107,7 @@ architecture rtl of top is
    constant GEN_ICAP_C     : boolean         := false;
 
    constant GEN_ILA_C      : boolean         := false;
-   constant GEN_ICAP_ILA_C : boolean         := true;
+   constant GEN_ICAP_ILA_C : boolean         := false;
    constant GEN_NO_ADCCLK_C: boolean         := false;
    constant GEN_DUMMY_C    : boolean         := false;
 
