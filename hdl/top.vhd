@@ -104,7 +104,7 @@ architecture rtl of top is
 
    -- keep this here as a constant so it
    -- is recorded in git.
-   constant GEN_ICAP_C     : boolean         := true;
+   constant GEN_ICAP_C     : boolean         := false;
 
    constant GEN_ILA_C      : boolean         := false;
    constant GEN_ICAP_ILA_C : boolean         := true;
