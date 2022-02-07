@@ -261,6 +261,7 @@ proc add_source_files {} {
    xfile add "hdl/usbadc-support/hdl/CicFilter.vhd"
    xfile add "hdl/usbadc-support/hdl/PipelinedRShifter.vhd"
    xfile add "hdl/usbadc-support/hdl/MulShifter.vhd"
+   xfile add "hdl/usbadc-support/hdl/SpiReg.vhd"
    xfile add "hdl/GitVersionPkg.vhd"
    xfile add "ipcore_dir/chipscope_icon.xco"
    xfile add "ipcore_dir/ila_1br.xco"

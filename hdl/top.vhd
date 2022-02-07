@@ -104,10 +104,10 @@ architecture rtl of top is
 
    -- keep this here as a constant so it
    -- is recorded in git.
-   constant GEN_ICAP_C     : boolean         := false;
+   constant GEN_ICAP_C     : boolean         := true;
 
    constant GEN_ILA_C      : boolean         := false;
-   constant GEN_ICAP_ILA_C : boolean         := false;
+   constant GEN_ICAP_ILA_C : boolean         := (DEVICE_G = "xc3s50a");
    constant GEN_NO_ADCCLK_C: boolean         := false;
    constant GEN_DUMMY_C    : boolean         := false;
 
@@ -149,7 +149,12 @@ architecture rtl of top is
    type FifoVariantType is ( LOOPBACK, BITBANG );
 
    constant FIFO_VARIANT_C : FifoVariantType := BITBANG;
-   constant BB_INIT_C : std_logic_vector(7 downto 0) := x"F1";
+   constant BB_INIT_C      : std_logic_vector(7 downto 0) := x"F1";
+
+   constant FEG_REG_LEN_C  : natural         := 8;
+   constant FEG_REG_INIT_C : std_logic_vector(FEG_REG_LEN_C - 1 downto 0) := (
+      others => '0'
+   );
 
    signal led         : std_logic_vector(NUM_LED_C - 1 downto 0) := (others => '1');
 
@@ -208,6 +213,13 @@ architecture rtl of top is
    signal adcSD_t     : std_logic := '1';
    signal adcSCSb     : std_logic := '1';
    signal adcDcmLckd  : std_logic := '0';
+
+   signal fegSCSb     : std_logic := '1';
+   signal fegSDI      : std_logic;
+   signal fegReg      : std_logic_vector(FEG_REG_LEN_C - 1 downto 0) := FEG_REG_INIT_C;
+   signal fegSRDat    : std_logic_vector(FEG_REG_LEN_C - 1 downto 0);
+   signal fegWen      : std_logic;
+   signal fegRen      : std_logic;
 
 
    signal pgaSClk     : std_logic := '0';
@@ -586,6 +598,7 @@ begin
          spi_csb <= '1';
          adcSCSb <= '1';
          pgaSCSb <= '1';
+         fegSCSb <= '1';
          adcSD_t <= '1';
 
          if    ( subCmdBB = CMD_BB_SPI_ROM_C ) then
@@ -598,6 +611,9 @@ begin
          elsif ( subCmdBB = CMD_BB_SPI_PGA_C ) then
                pgaSCSb           <= bbo(BB_SPI_CSb_C);
                bbi(BB_SPI_MSI_C) <= pgaSDI;
+         elsif ( subCmdBB = CMD_BB_SPI_FEG_C ) then
+               fegSCSb           <= bbo(BB_SPI_CSb_C);
+               bbi(BB_SPI_MSI_C) <= fegSDI;
          else
                bbi(BB_SPI_MSI_C) <= '0';
          end if;
@@ -653,6 +669,36 @@ begin
             adcDcmLocked         => adcDcmLckd
          );
 
+      P_FEG_REG : process ( fifoClk ) is
+      begin
+         if ( rising_edge( fifoClk ) ) then
+            if ( fifoRst = '1' ) then
+               fegReg <= FEG_REG_INIT_C;
+            elsif ( fegWen = '1' ) then
+               fegReg <= fegSRDat;
+            end if;
+         end if;
+      end process P_FEG_REG;
+
+      U_FEG_SPI : entity work.SpiReg
+         generic map (
+            NUM_BITS_G => FEG_REG_LEN_C,
+            INIT_VAL_G => FEG_REG_INIT_C
+         )
+         port map (
+            clk        => fifoClk,
+            rst        => fifoRst,
+
+            sclk       => spi_sck,
+            scsb       => fegSCSb,
+            mosi       => spi_mosi,
+            miso       => fegSDI,
+
+            data_inp   => fegReg,
+            rs         => fegRen,
+            data_out   => fegSRDat,
+            ws         => fegWen
+         );
    end generate GEN_BITBANG;
 
 
@@ -675,34 +721,37 @@ begin
       -- to try to determine if this was a multiboot because the bitstream
       -- writes GENERAL1/2 every time (even if we tell bitgen not to embed the
       -- next address -- it will then simply be 0x00000000).
-      constant ICAP_PROG_MB_C: IcapPrgArray (16 downto 1) := (
+      -- UPDATE: this solution works -- we just need to pass bitgen the
+      --            -g next_config_register_write:Disable
+      --         option :-)
+      constant ICAP_PROG_MB_C: IcapPrgArray (26 downto 1) := (
          -- UG332
          (RWb => '0', data => x"FF"), -- Dummy      (hi)
          (RWb => '0', data => x"FF"), --            (lo)
          (RWb => '0', data => x"AA"), -- SYNC       (hi)
          (RWb => '0', data => x"99"), --            (lo)
---       (RWb => '0', data => "00110010"), -- Write GENERAL1 (hi)
---       (RWb => '0', data => "01100001"), --        (lo)
---       (RWb => '0', data => x"00"), --  A16..A8   (hi)
---       (RWb => '0', data => x"00"), --  A07..A0   (lo)
+         (RWb => '0', data => "00101010"), -- Read GENERAL2 (hi)
+         (RWb => '0', data => "10000001"), --        (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi) -- flush 'pipeline' with 2 no-ops
+         (RWb => '0', data => x"00"), --            (lo)
+         (RWb => '0', data => x"20"), -- NOOP       (hi)
+         (RWb => '0', data => x"00"), --            (lo)
+         (RWb => '1', data => x"FF"), --            (xx) -- readout after 3 clocks
+         (RWb => '1', data => x"FF"), --            (xx)
+         (RWb => '1', data => x"FF"), --            (hi)
+         (RWb => '1', data => x"FF"), --            (lo)
+         (RWb => '0', data => "00110010"), -- Write GENERAL1 (hi)
+         (RWb => '0', data => "01100001"), --        (lo)
+         (RWb => '0', data => x"00"), --  A16..A8   (hi)
+         (RWb => '0', data => x"00"), --  A07..A0   (lo)
          (RWb => '0', data => "00110010"), -- Write GENERAL2 (hi)
          (RWb => '0', data => "10000001"), --        (lo)
          (RWb => '0', data => x"00"), --  SPI CMD   (hi) (0x00 seems to indicate 'last command')
          (RWb => '0', data => MB_ADDR_F ), --  A23..16   (lo)
-         (RWb => '0', data => x"30"), -- CMD        (hi)
-         (RWb => '0', data => x"A1"), --            (lo)
-         (RWb => '0', data => x"00"), -- REBOOT     (hi)
-         (RWb => '0', data => x"0E"), --            (lo)
---       (RWb => '0', data => "00101010"), -- Read GENERAL2 (hi)
---       (RWb => '0', data => "10000001"), --        (lo)
---       (RWb => '0', data => x"20"), -- NOOP       (hi) -- flush 'pipeline' with 2 no-ops
---       (RWb => '0', data => x"00"), --            (lo)
---       (RWb => '0', data => x"20"), -- NOOP       (hi)
---       (RWb => '0', data => x"00"), --            (lo)
---       (RWb => '1', data => x"FF"), --            (xx) -- readout after 3 clocks
---       (RWb => '1', data => x"FF"), --            (xx)
---       (RWb => '1', data => x"FF"), --            (hi)
---       (RWb => '1', data => x"FF"), --            (lo)
+--       (RWb => '0', data => x"30"), -- CMD        (hi)
+--       (RWb => '0', data => x"A1"), --            (lo)
+--       (RWb => '0', data => x"00"), -- REBOOT     (hi)
+--       (RWb => '0', data => x"0E"), --            (lo)
          (RWb => '0', data => x"20"), -- NOOP       (hi)
          (RWb => '0', data => x"00"), --            (lo)
          (RWb => '0', data => x"20"), -- NOOP       (hi)
@@ -780,7 +829,7 @@ begin
             v.idx   := icapReg.idx - 1;
          end if;
          if ( icapReg.idx >= ICAP_PROG_C'low  and icapReg.idx <= ICAP_PROG_C'high ) then
-            if ( (multiBoot or J12B) = '1' ) then
+            if ( (multiBoot or not J12B) = '1' ) then
                v.jmp := '1';
             end if;
             if ( v.jmp = '1' ) then
