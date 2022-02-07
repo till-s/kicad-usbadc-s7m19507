@@ -216,6 +216,7 @@ architecture rtl of top is
 
    signal fegSCSb     : std_logic := '1';
    signal fegSDI      : std_logic;
+   signal fegSDO      : std_logic;
    signal fegReg      : std_logic_vector(FEG_REG_LEN_C - 1 downto 0) := FEG_REG_INIT_C;
    signal fegSRDat    : std_logic_vector(FEG_REG_LEN_C - 1 downto 0);
    signal fegWen      : std_logic;
@@ -600,6 +601,7 @@ begin
          pgaSCSb <= '1';
          fegSCSb <= '1';
          adcSD_t <= '1';
+         fegSDI  <= fegSDO; -- loopback for pure read operation
 
          if    ( subCmdBB = CMD_BB_SPI_ROM_C ) then
                spi_csb           <= bbo(BB_SPI_CSb_C);
@@ -613,7 +615,11 @@ begin
                bbi(BB_SPI_MSI_C) <= pgaSDI;
          elsif ( subCmdBB = CMD_BB_SPI_FEG_C ) then
                fegSCSb           <= bbo(BB_SPI_CSb_C);
-               bbi(BB_SPI_MSI_C) <= fegSDI;
+               bbi(BB_SPI_MSI_C) <= fegSDO;
+               -- use the 'hiz' bit as a read/writeb indicator
+               if ( bbo(BB_SPI_T_C) = '0' ) then
+                  fegSDI <= spi_mosi;
+               end if;
          else
                bbi(BB_SPI_MSI_C) <= '0';
          end if;
@@ -691,8 +697,8 @@ begin
 
             sclk       => spi_sck,
             scsb       => fegSCSb,
-            mosi       => spi_mosi,
-            miso       => fegSDI,
+            mosi       => fegSDI,
+            miso       => fegSDO,
 
             data_inp   => fegReg,
             rs         => fegRen,
