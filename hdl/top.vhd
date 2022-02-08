@@ -104,7 +104,7 @@ architecture rtl of top is
 
    -- keep this here as a constant so it
    -- is recorded in git.
-   constant GEN_ICAP_C     : boolean         := true;
+   constant GEN_ICAP_C     : boolean         := false;
 
    constant GEN_ILA_C      : boolean         := false;
    constant GEN_ICAP_ILA_C : boolean         := (DEVICE_G = "xc3s50a");
@@ -221,6 +221,7 @@ architecture rtl of top is
    signal fegSRDat    : std_logic_vector(FEG_REG_LEN_C - 1 downto 0);
    signal fegWen      : std_logic;
    signal fegRen      : std_logic;
+   signal fegA        : std_logic_vector(1 downto 0);
 
 
    signal pgaSClk     : std_logic := '0';
@@ -685,6 +686,11 @@ begin
             end if;
          end if;
       end process P_FEG_REG;
+
+      fegA <= fegReg(1 downto 0) when fegReg(1 downto 0) /= "00" else "11";
+
+      IO_L05_P_2 <= fegA(1);
+      IO_L05_N_2 <= fegA(0);
 
       U_FEG_SPI : entity work.SpiReg
          generic map (
