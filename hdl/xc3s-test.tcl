@@ -113,12 +113,22 @@ proc recreate_project {} {
    add_source_files
    create_libraries
    set_process_props
+   project close
+   # TS, 2/2022 - I found that the 'Other Bitgen Command Line Options'
+   # property while set in the project is not written into the file. It
+   # **does** work, however, if we close, reopen, then set the property
+   # and close again. Weird...
+   project open $myProject
+   project set "Other Bitgen Command Line Options" "-g next_config_register_write:Disable" -process "Generate Programming File"
+   project close
    puts "$myScript: project rebuild completed."
 }
 
 proc rebuild_project {} {
 
    recreate_project
+
+   project open $myProject
 
    run_process
 
@@ -316,6 +326,8 @@ proc set_process_props {} {
    puts "$myScript: setting process properties..."
 
    project set "User Browsed Strategy Files" "/opt/Xilinx/ise/14.7/ISE_DS/ISE/spartan3a/data/spartan3a_performance_with_iobpacking.xds"
+
+   project set "Generics, Parameters" "DEVICE_G=\"xc3s200a\"" -process "Synthesize - XST"
    project set "Allow Logic Optimization Across Hierarchy" "true" -process "Map"
    project set "Pack I/O Registers/Latches into IOBs" "For Inputs and Outputs" -process "Map"
    project set "Generate Detailed MAP Report" "true" -process "Map"
