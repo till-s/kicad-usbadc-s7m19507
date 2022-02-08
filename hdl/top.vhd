@@ -102,9 +102,12 @@ end top;
 
 architecture rtl of top is
 
+   constant XC3S50A_C      : string          := "xc3s50a";
+   constant XC3S200A_C     : string          := "xc3s200a";
+
    -- keep this here as a constant so it
    -- is recorded in git.
-   constant GEN_ICAP_C     : boolean         := false;
+   constant GEN_ICAP_C     : boolean         := true;
 
    constant GEN_ILA_C      : boolean         := false;
    constant GEN_ICAP_ILA_C : boolean         := (DEVICE_G = "xc3s50a");
@@ -125,7 +128,7 @@ architecture rtl of top is
 
    function MEM_DEPTH_F return natural is
    begin
-      if    ( DEVICE_G = "xc3s200a" ) then
+      if    ( DEVICE_G = XC3S200A_C ) then
          return (16*1024);
       else
          if ( GEN_ICAP_ILA_C ) then
@@ -139,7 +142,7 @@ architecture rtl of top is
 
    function DISABLE_DECIMATORS_F return boolean is
    begin
-      return ( DEVICE_G /= "xc3s200a" );
+      return ( DEVICE_G /= XC3S200A_C );
    end function DISABLE_DECIMATORS_F;
 
    constant NUM_LED_C         : natural := 7;
@@ -271,6 +274,8 @@ architecture rtl of top is
    signal ila_trg3 : std_logic_vector( 7 downto 0) := (others => '0');
 
 begin
+
+   assert ( DEVICE_G = XC3S50A_C or DEVICE_G = XC3S200A_C ) report "Unsupported device" severity failure;
 
    U_FIFOCLK_BUF : component IBUFG
       port map (
