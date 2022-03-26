@@ -347,8 +347,8 @@ begin
    IO_L05_N_1 <= 'Z' when ioDir_t = '1' else ioDir_o;
    ioDir_i    <= IO_L05_N_1;
 
-   IO_L06_P_1 <= 'Z' when ioDat_t = '1' else ioDat_o;
-   ioDat_i    <= IO_L06_P_1;
+   IO_L06_P_0 <= 'Z' when ioDat_t = '1' else ioDat_o;
+   ioDat_i    <= IO_L06_P_0;
 
    ioDir_t    <= '0';
    ioDat_t    <= not ioDir_o;
