@@ -114,6 +114,8 @@ architecture rtl of top is
    constant GEN_NO_ADCCLK_C: boolean         := false;
    constant GEN_DUMMY_C    : boolean         := false;
 
+   constant ADC_BITS_C     : natural         := 8;
+
    function MB_ADDR_F   return std_logic_vector is
      variable v : std_logic_vector(7 downto 0);
    begin
@@ -204,9 +206,9 @@ architecture rtl of top is
    signal spi_mosi    : std_logic := '0';
    signal spi_miso    : std_logic;
 
-   signal adc_i       : std_logic_vector(8 downto 0);
-   signal adc_o       : std_logic_vector(8 downto 0) := (others => '0');
-   signal adc_t       : std_logic_vector(8 downto 0) := (others => '1');
+   signal adc_i       : std_logic_vector(ADC_BITS_C downto 0);
+   signal adc_o       : std_logic_vector(ADC_BITS_C downto 0) := (others => '0');
+   signal adc_t       : std_logic_vector(ADC_BITS_C downto 0) := (others => '1');
    signal adcDClk     : std_logic;
    signal adcSync     : std_logic := '0';
    signal adcDRst     : std_logic := '0';
@@ -385,15 +387,16 @@ begin
    -- ADC
    IO_L03_P_0      <= adcSync;
 
-   adc_i(0) <= IO_L04_P_1; -- DOR bit
-   adc_i(1) <= IO_L05_P_1;
-   adc_i(2) <= IO_L04_N_1;
-   adc_i(3) <= IO_L03_N_1;
-   adc_i(4) <= IO_L03_P_1;
-   adc_i(5) <= IO_L02_N_1;
-   adc_i(6) <= IO_L02_P_1;
-   adc_i(7) <= IO_L01_N_1;
-   adc_i(8) <= IO_L01_P_1;
+   adc_i(ADC_BITS_C - 0) <= IO_L01_P_1;
+   adc_i(ADC_BITS_C - 1) <= IO_L01_N_1;
+   adc_i(ADC_BITS_C - 2) <= IO_L02_P_1;
+   adc_i(ADC_BITS_C - 3) <= IO_L02_N_1;
+   adc_i(ADC_BITS_C - 4) <= IO_L03_P_1;
+   adc_i(ADC_BITS_C - 5) <= IO_L03_N_1;
+   adc_i(ADC_BITS_C - 6) <= IO_L04_N_1;
+   adc_i(ADC_BITS_C - 7) <= IO_L05_P_1;
+
+   adc_i(0)              <= IO_L04_P_1; -- DOR bit
 
    GEN_DUMMY : if ( GEN_DUMMY_C ) generate
       -- adc_t is abused as an intermediate signal here
@@ -654,6 +657,7 @@ begin
             I2C_SCL_G            => BB_I2C_SCL_C,
             BBO_INIT_G           => BB_INIT_C,
             MEM_DEPTH_G          => MEM_DEPTH_F,
+            ADC_BITS_G           => ADC_BITS_C,
             FIFO_FREQ_G          => FIFO_CLOCK_FREQ_C,
             DISABLE_DECIMATORS_G => DISABLE_DECIMATORS_F
          )
